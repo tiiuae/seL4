@@ -76,7 +76,7 @@ config_choice(KernelLAPICMode KERNEL_LAPIC_MODE
     "X2APIC;KernelLAPICModeX2APIC;X2APIC;KernelArchX86"
 )
 
-config_option(KernelUseLogcalIDs USE_LOGCAL_IDS
+config_option(KernelUseLogicalIDs USE_LOGICAL_IDS
     "Use logical IDs to broadcast IPI between cores. Not all machines support logical \
     IDs. In xAPIC mode only 8 cores can be addressed using logical IDs."
     DEFAULT OFF

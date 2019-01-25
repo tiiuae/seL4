@@ -334,7 +334,14 @@ schedContext_donate(sched_context_t *sc, tcb_t *to)
     sc->scTcb = to;
     to->tcbSchedContext = sc;
 
+    int old_core = to->tcbAffinity;
+    int new_core = sc->scCore;
+
     SMP_COND_STATEMENT(migrateTCB(to, sc->scCore));
+
+    if (old_core != new_core) {
+        SMP_COND_STATEMENT(remoteQueueUpdate(to));
+    }
 }
 
 void

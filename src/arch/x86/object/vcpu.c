@@ -1325,7 +1325,15 @@ VMCheckBoundNotification(tcb_t *tcb)
             && ntfnPtr && notification_ptr_get_state(ntfnPtr) == NtfnState_Active) {
 
         word_t badge = notification_ptr_get_ntfnMsgIdentifier(ntfnPtr);
-        notification_ptr_set_state(ntfnPtr, NtfnState_Idle);
+
+        /* Taken from maybeDonateSchedContext */
+        if (tcb->tcbSchedContext == NULL) {
+            sched_context_t *sc = SC_PTR(notification_ptr_get_ntfnSchedContext(ntfnPtr));
+            if (sc != NULL && sc->scTcb == NULL) {
+                schedContext_donate(sc, tcb);
+            }
+        }
+
         setThreadState(tcb, ThreadState_Running);
         setRegister(tcb, badgeRegister, badge);
         Arch_leaveVMAsyncTransfer(tcb);
