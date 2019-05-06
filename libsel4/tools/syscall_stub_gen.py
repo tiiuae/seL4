@@ -332,7 +332,7 @@ def init_arch_types(wordsize):
             CapType("seL4_X86_EPTPDPT", wordsize),
             CapType("seL4_X86_EPTPD", wordsize),
             CapType("seL4_X86_EPTPT", wordsize),
-            StructType("seL4_VCPUContext", wordsize * 7 ,wordsize),
+            StructType("seL4_VCPUContext", wordsize * 15, wordsize),
             StructType("seL4_UserContext", wordsize * 19, wordsize),
         ],
         "riscv32" : [

@@ -204,11 +204,13 @@ void VISIBLE NORETURN c_handle_vmexit(void)
      * hardware. To force a reload to happen we set the cached value to something
      * that is guaranteed to not be the target threads value, ensuring both
      * the cache and the hardware get updated */
+#ifndef CONFIG_ARCH_X86_64
     tcb_t *cur_thread = NODE_STATE(ksCurThread);
     if (thread_state_ptr_get_tsType(&cur_thread->tcbState) != ThreadState_RunningVM) {
         ARCH_NODE_STATE(x86KSCurrentGSBase) = -(word_t)1;
         ARCH_NODE_STATE(x86KSCurrentFSBase) = -(word_t)1;
     }
+#endif
     restore_user_context();
     UNREACHABLE();
 }
