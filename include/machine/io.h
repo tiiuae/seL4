@@ -21,6 +21,9 @@ void putDebugChar(unsigned char c);
 /* io for dumping capdl */
 unsigned char getDebugChar(void);
 #endif
+/* for reset */
+void handleUartIRQ(void);
+void init_serial(void);
 
 #ifdef CONFIG_PRINTING
 /* printf will result in output */
