@@ -26,32 +26,32 @@ static inline void
 debug_printKernelEntryReason(void)
 {
     printf("\nKernel entry via ");
-    switch (ksKernelEntry.path) {
+    switch (NODE_STATE(ksKernelEntry).path) {
     case Entry_Interrupt:
-        printf("Interrupt, irq %lu\n", (unsigned long) ksKernelEntry.word);
+        printf("Interrupt, irq %lu\n", (unsigned long) NODE_STATE(ksKernelEntry).word);
         break;
     case Entry_UnknownSyscall:
-        printf("Unknown syscall, word: %lu", (unsigned long) ksKernelEntry.word);
+        printf("Unknown syscall, word: %lu", (unsigned long) NODE_STATE(ksKernelEntry).word);
         break;
     case Entry_VMFault:
-        printf("VM Fault, fault type: %lu\n", (unsigned long) ksKernelEntry.word);
+        printf("VM Fault, fault type: %lu\n", (unsigned long) NODE_STATE(ksKernelEntry).word);
         break;
     case Entry_UserLevelFault:
-        printf("User level fault, number: %lu", (unsigned long) ksKernelEntry.word);
+        printf("User level fault, number: %lu", (unsigned long) NODE_STATE(ksKernelEntry).word);
         break;
 #ifdef CONFIG_HARDWARE_DEBUG_API
     case Entry_DebugFault:
-        printf("Debug fault. Fault Vaddr: 0x%lx", (unsigned long) ksKernelEntry.word);
+        printf("Debug fault. Fault Vaddr: 0x%lx", (unsigned long) NODE_STATE(ksKernelEntry).word);
         break;
 #endif
     case Entry_Syscall:
-        printf("Syscall, number: %ld, %s\n", (long) ksKernelEntry.syscall_no, syscall_names[ksKernelEntry.syscall_no]);
-        if (ksKernelEntry.syscall_no == -SysSend ||
-                ksKernelEntry.syscall_no == -SysNBSend ||
-                ksKernelEntry.syscall_no == -SysCall) {
+        printf("Syscall, number: %ld, %s\n", (long) NODE_STATE(ksKernelEntry).syscall_no, syscall_names[NODE_STATE(ksKernelEntry).syscall_no]);
+        if (NODE_STATE(ksKernelEntry).syscall_no == -SysSend ||
+                NODE_STATE(ksKernelEntry).syscall_no == -SysNBSend ||
+                NODE_STATE(ksKernelEntry).syscall_no == -SysCall) {
 
-            printf("Cap type: %lu, Invocation tag: %lu\n", (unsigned long) ksKernelEntry.cap_type,
-                   (unsigned long) ksKernelEntry.invocation_tag);
+            printf("Cap type: %lu, Invocation tag: %lu\n", (unsigned long) NODE_STATE(ksKernelEntry).cap_type,
+                   (unsigned long) NODE_STATE(ksKernelEntry).invocation_tag);
         }
         break;
 #ifdef CONFIG_ARCH_ARM

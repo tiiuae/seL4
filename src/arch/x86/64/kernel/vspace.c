@@ -137,6 +137,21 @@ map_kernel_window(
                            1, /* read_write */
                            1  /* present */
                        );
+
+#ifdef CONFIG_BENCHMARK_USE_KERNEL_LOG_BUFFER
+    for(int i = 0; i < CONFIG_MAX_NUM_NODES; i++) {
+        x64KSKernelPDs[GET_PD_INDEX(KS_LOG_PPTR(i))] = pde_pde_pt_new(
+                                                           0, /* xd */
+                                                           kpptr_to_paddr(&x64KSGlobalLogPT[i][0]),
+                                                           0, /* accessed */
+                                                           0, /* cache_disabled */
+                                                           0, /* write_through */
+                                                           0, /* super_user */
+                                                           1, /* read_write */
+                                                           1  /* present */
+                                                       );
+    }
+#endif  /* CONFIG_BENCHMARK_USE_KERNEL_LOG_BUFFER */
 #else
 
     int pd_index = 0;
@@ -236,14 +251,23 @@ map_kernel_window(
                                                       1, /* read_write */
                                                       1  /* present */
                                                   );
-#endif
-
-#if CONFIG_MAX_NUM_TRACE_POINTS > 0
-    /* use the last PD entry as the benchmark log storage.
-     * the actual backing physical memory will be filled
-     * later by using alloc_region */
-    ksLog = (ks_log_entry_t *)(PPTR_KDEV + 0x200000 * (BIT(PD_INDEX_BITS) - 1));
-#endif
+#ifdef CONFIG_BENCHMARK_USE_KERNEL_LOG_BUFFER
+    for(int i = 0; i < CONFIG_MAX_NUM_NODES; i++) {
+        int pd_index = GET_PDPT_INDEX(KS_LOG_PPTR(i));
+        int pde_index = GET_PD_INDEX(KS_LOG_PPTR(i));
+        x64KSKernelPDs[pd_index][pde_index] = pde_pde_pt_new(
+                                                  0, /* xd */
+                                                  kpptr_to_paddr(&x64KSGlobalLogPT[i][0]),
+                                                  0, /* accessed */
+                                                  0, /* cache_disabled */
+                                                  0, /* write_through */
+                                                  0, /* super_user */
+                                                  1, /* read_write */
+                                                  1  /* present */
+                                              );
+    }
+#endif  /* CONFIG_BENCHMARK_USE_KERNEL_LOG_BUFFER */
+#endif  /* CONFIG_HUGE_PAGE */
 
     /* now map in the kernel devices */
     if (!map_kernel_window_devices(x64KSKernelPT, num_ioapic, ioapic_paddrs, num_drhu, drhu_list)) {
@@ -1693,3 +1717,67 @@ Arch_userStackTrace(tcb_t *tptr)
     }
 }
 #endif /* CONFIG_PRINTING */
+
+#ifdef CONFIG_BENCHMARK_USE_KERNEL_LOG_BUFFER
+exception_t benchmark_arch_map_logBuffer(word_t frame_cptr)
+{
+    lookupCapAndSlot_ret_t lu_ret;
+    vm_page_size_t frameSize;
+    pptr_t frame_pptr;
+
+    /* faulting section */
+    lu_ret = lookupCapAndSlot(NODE_STATE(ksCurThread), frame_cptr);
+
+    if (unlikely(lu_ret.status != EXCEPTION_NONE)) {
+        userError("Invalid cap #%lu.", frame_cptr);
+        current_fault = seL4_Fault_CapFault_new(frame_cptr, false);
+
+        return EXCEPTION_SYSCALL_ERROR;
+    }
+
+    if (cap_get_capType(lu_ret.cap) != cap_frame_cap) {
+        userError("Invalid cap. Log buffer should be of a frame cap");
+        current_fault = seL4_Fault_CapFault_new(frame_cptr, false);
+
+        return EXCEPTION_SYSCALL_ERROR;
+    }
+
+    frameSize = cap_frame_cap_get_capFSize(lu_ret.cap);
+
+    if (frameSize != X86_LargePage) {
+        userError("Invalid size for log Buffer. The kernel expects at least 1M log buffer");
+        current_fault = seL4_Fault_CapFault_new(frame_cptr, false);
+
+        return EXCEPTION_SYSCALL_ERROR;
+    }
+
+    frame_pptr = cap_frame_cap_get_capFBasePtr(lu_ret.cap);
+
+    NODE_STATE(ksUserLogBuffer) = pptr_to_paddr((void *) frame_pptr);
+
+    int core = getCurrentCPUIndex();
+
+    /* fill global log page table with mappings */
+    for (int idx = 0; idx < BIT(PT_INDEX_BITS); idx++) {
+        paddr_t physical_address = NODE_STATE(ksUserLogBuffer) + (idx << seL4_PageBits);
+
+        pte_t pte = pte_new(
+                        0,                  /* avl                  */
+                        physical_address,   /* page_base_address    */
+                        1,                  /* global               */
+                        VMKernelOnly,       /* pat                  */
+                        0,                  /* dirty                */
+                        0,                  /* accessed             */
+                        0,                  /* cache_disabled       */
+                        1,                  /* write_through        */
+                        1,                  /* super_user           */
+                        1,                  /* read_write           */
+                        1                   /* present              */
+                    );
+
+        x64KSGlobalLogPT[core][idx] = pte;
+    }
+
+    return EXCEPTION_NONE;
+}
+#endif /* CONFIG_BENCHMARK_USE_KERNEL_LOG_BUFFER */

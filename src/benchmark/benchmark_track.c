@@ -14,24 +14,20 @@
 
 #ifdef CONFIG_BENCHMARK_TRACK_KERNEL_ENTRIES
 
-timestamp_t ksEnter;
-seL4_Word ksLogIndex;
-seL4_Word ksLogIndexFinalized;
-
 void benchmark_track_exit(void)
 {
     timestamp_t duration = 0;
     timestamp_t ksExit = timestamp();
-    benchmark_track_kernel_entry_t *ksLog = (benchmark_track_kernel_entry_t *) KS_LOG_PPTR;
+    benchmark_track_kernel_entry_t *ksLog = (benchmark_track_kernel_entry_t *) KS_LOG_PPTR(getCurrentCPUIndex());
 
-    if (likely(ksUserLogBuffer != 0)) {
+    if (likely(NODE_STATE(ksUserLogBuffer) != 0)) {
         /* If Log buffer is filled, do nothing */
-        if (likely(ksLogIndex < MAX_LOG_SIZE)) {
-            duration = ksExit - ksEnter;
-            ksLog[ksLogIndex].entry = ksKernelEntry;
-            ksLog[ksLogIndex].start_time = ksEnter;
-            ksLog[ksLogIndex].duration = duration;
-            ksLogIndex++;
+        if (likely(NODE_STATE(ksLogIndex) < MAX_LOG_SIZE)) {
+            duration = ksExit - NODE_STATE(ksEnter);
+            ksLog[NODE_STATE(ksLogIndex)].entry = NODE_STATE(ksKernelEntry);
+            ksLog[NODE_STATE(ksLogIndex)].start_time = NODE_STATE(ksEnter);
+            ksLog[NODE_STATE(ksLogIndex)].duration = duration;
+            NODE_STATE(ksLogIndex)++;
         }
     }
 }

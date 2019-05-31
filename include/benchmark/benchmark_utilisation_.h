@@ -20,6 +20,10 @@
 typedef struct {
     timestamp_t schedule_start_time;
     uint64_t    utilisation;
+#ifdef CONFIG_VTX
+    timestamp_t vcpu_start_time;
+    uint64_t    vcpu_utilisation;
+#endif
 } benchmark_util_t;
 #endif /* CONFIG_BENCHMARK_TRACK_UTILISATION */
 

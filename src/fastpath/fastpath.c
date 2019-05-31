@@ -155,7 +155,7 @@ fastpath_call(word_t cptr, word_t msgInfo)
 
 
 #ifdef CONFIG_BENCHMARK_TRACK_KERNEL_ENTRIES
-    ksKernelEntry.is_fastpath = true;
+    NODE_STATE(ksKernelEntry).is_fastpath = true;
 #endif
 
     /* Dequeue the destination. */
@@ -355,7 +355,7 @@ fastpath_reply_recv(word_t cptr, word_t msgInfo, word_t reply)
 
 
 #ifdef CONFIG_BENCHMARK_TRACK_KERNEL_ENTRIES
-    ksKernelEntry.is_fastpath = true;
+    NODE_STATE(ksKernelEntry).is_fastpath = true;
 #endif
 
     /* Set thread state to BlockedOnReceive */

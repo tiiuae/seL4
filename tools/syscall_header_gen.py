@@ -85,11 +85,17 @@ typedef word_t syscall_t;
 #ifdef CONFIG_DEBUG_BUILD
 static char *syscall_names[] UNUSED = {
 {%- set ns.syscall_number = 1 -%}
-{%- for condition, list in assembler %}
+{%- for condition, list in enum %}
+   {%- if condition | length > 0 %}
+#if {{condition}}
+   {%- endif %}
    {%- for syscall in list %}
          [{{ns.syscall_number}}] = "{{syscall}}",
         {%- set ns.syscall_number = ns.syscall_number +1 -%}
    {%- endfor %}
+   {%- if condition | length > 0 %}
+#endif /* {{condition}} */
+   {%- endif %}
 {%- endfor %}
 };
 #endif /* CONFIG_DEBUG_BUILD */
@@ -241,4 +247,3 @@ if __name__ == "__main__":
     if (args.libsel4_header is not None):
         generate_libsel4_file(args.libsel4_header, api + debug)
         args.libsel4_header.close()
-

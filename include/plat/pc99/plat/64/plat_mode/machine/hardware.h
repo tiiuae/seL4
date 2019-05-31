@@ -49,6 +49,12 @@
 #define TLBBITMAP_PML4_RESERVED (TLBBITMAP_ROOT_ENTRIES * BIT(PML4_INDEX_OFFSET))
 #define TLBBITMAP_PPTR (PPTR_BASE - TLBBITMAP_PML4_RESERVED)
 
+#ifdef CONFIG_BENCHMARK_USE_KERNEL_LOG_BUFFER
+/* use the last few PD entries as the benchmark log storage. */
+#define KS_LOG_PPTR_BASE (PPTR_KDEV + (BIT(seL4_LargePageBits) * (BIT(PD_INDEX_BITS) - CONFIG_MAX_NUM_NODES)))
+#define KS_LOG_PPTR(i) (KS_LOG_PPTR_BASE + (i * BIT(seL4_LargePageBits)))
+#endif
+
 /* Define PPTR_USER_TOP to be 1 before the last address before sign extension occurs.
  * This ensures that
  *  1. user addresses never needed to be sign extended to be valid canonical addresses

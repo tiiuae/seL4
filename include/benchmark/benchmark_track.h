@@ -22,7 +22,6 @@
 
 #if defined(CONFIG_DEBUG_BUILD) || defined(CONFIG_BENCHMARK_TRACK_KERNEL_ENTRIES)
 #define TRACK_KERNEL_ENTRIES 1
-extern kernel_entry_t ksKernelEntry;
 #ifdef CONFIG_BENCHMARK_TRACK_KERNEL_ENTRIES
 /**
  *  Calculate the maximum number of kernel entries that can be tracked,
@@ -31,10 +30,6 @@ extern kernel_entry_t ksKernelEntry;
  */
 #define MAX_LOG_SIZE (seL4_LogBufferSize / \
              sizeof(benchmark_track_kernel_entry_t))
-
-extern timestamp_t ksEnter;
-extern seL4_Word ksLogIndex;
-extern seL4_Word ksLogIndexFinalized;
 
 /**
  * @brief Fill in logging info for kernel entries
@@ -49,7 +44,7 @@ void benchmark_track_exit(void);
 static inline void
 benchmark_track_start(void)
 {
-    ksEnter = timestamp();
+    NODE_STATE(ksEnter) = timestamp();
 }
 #endif /* CONFIG_BENCHMARK_TRACK_KERNEL_ENTRIES */
 
@@ -58,10 +53,10 @@ benchmark_debug_syscall_start(word_t cptr, word_t msgInfo, word_t syscall)
 {
     seL4_MessageInfo_t info = messageInfoFromWord_raw(msgInfo);
     lookupCapAndSlot_ret_t lu_ret = lookupCapAndSlot(NODE_STATE(ksCurThread), cptr);
-    ksKernelEntry.path = Entry_Syscall;
-    ksKernelEntry.syscall_no = -syscall;
-    ksKernelEntry.cap_type = cap_get_capType(lu_ret.cap);
-    ksKernelEntry.invocation_tag = seL4_MessageInfo_get_label(info);
+    NODE_STATE(ksKernelEntry).path = Entry_Syscall;
+    NODE_STATE(ksKernelEntry).syscall_no = -syscall;
+    NODE_STATE(ksKernelEntry).cap_type = cap_get_capType(lu_ret.cap);
+    NODE_STATE(ksKernelEntry).invocation_tag = seL4_MessageInfo_get_label(info);
 }
 #endif
 

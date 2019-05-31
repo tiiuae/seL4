@@ -58,6 +58,23 @@ UP_STATE_DEFINE(ticks_t, ksCurTime);
 /* current scheduling context pointer */
 UP_STATE_DEFINE(sched_context_t *, ksCurSC);
 
+#ifdef CONFIG_BENCHMARK_TRACK_UTILISATION
+UP_STATE_DEFINE(bool_t, benchmark_log_utilisation_enabled);
+UP_STATE_DEFINE(timestamp_t, benchmark_start_time);
+UP_STATE_DEFINE(timestamp_t, benchmark_end_time);
+#endif
+
+#if (defined CONFIG_DEBUG_BUILD || defined CONFIG_BENCHMARK_TRACK_KERNEL_ENTRIES)
+UP_STATE_DEFINE(timestamp_t, ksEnter);
+UP_STATE_DEFINE(kernel_entry_t, ksKernelEntry);
+#endif /* DEBUG */
+
+#ifdef CONFIG_BENCHMARK_TRACK_KERNEL_ENTRIES
+UP_STATE_DEFINE(seL4_Word, ksLogIndex);
+UP_STATE_DEFINE(seL4_Word, ksLogIndexFinalized);
+UP_STATE_DEFINE(paddr_t, ksUserLogBuffer);
+#endif
+
 #ifdef CONFIG_DEBUG_BUILD
 UP_STATE_DEFINE(tcb_t *, ksDebugTCBs);
 #endif /* CONFIG_DEBUG_BUILD */
@@ -81,11 +98,3 @@ word_t ksDomScheduleIdx;
 
 /* Only used by lockTLBEntry */
 word_t tlbLockCount = 0;
-
-#if (defined CONFIG_DEBUG_BUILD || defined CONFIG_BENCHMARK_TRACK_KERNEL_ENTRIES)
-kernel_entry_t ksKernelEntry;
-#endif /* DEBUG */
-
-#ifdef CONFIG_BENCHMARK_USE_KERNEL_LOG_BUFFER
-paddr_t ksUserLogBuffer;
-#endif /* CONFIG_BENCHMARK_USE_KERNEL_LOG_BUFFER */

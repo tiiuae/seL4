@@ -16,10 +16,32 @@
 
 static inline void arch_c_entry_hook(void)
 {
+#ifdef CONFIG_VTX
+#ifdef CONFIG_BENCHMARK_TRACK_UTILISATION
+    tcb_t *cur_thread = NODE_STATE(ksCurThread);
+    if (thread_state_ptr_get_tsType(&cur_thread->tcbState) == ThreadState_RunningVM) {
+        if (likely(NODE_STATE(benchmark_log_utilisation_enabled))) {
+            if (likely(NODE_STATE(ksEnter) > cur_thread->benchmark.vcpu_start_time)) {
+                cur_thread->benchmark.vcpu_utilisation += (NODE_STATE(ksEnter) - cur_thread->benchmark.vcpu_start_time);
+            }
+        }
+    }
+#endif
+#endif
 }
 
 static inline void arch_c_exit_hook(void)
 {
+#ifdef CONFIG_VTX
+#ifdef CONFIG_BENCHMARK_TRACK_UTILISATION
+    tcb_t *cur_thread = NODE_STATE(ksCurThread);
+    if (thread_state_ptr_get_tsType(&cur_thread->tcbState) == ThreadState_RunningVM) {
+        if (likely(NODE_STATE(benchmark_log_utilisation_enabled))) {
+            cur_thread->benchmark.vcpu_start_time = timestamp();
+        }
+    }
+#endif
+#endif
 }
 
 void c_handle_syscall(word_t cptr, word_t msgInfo, syscall_t syscall, word_t reply)

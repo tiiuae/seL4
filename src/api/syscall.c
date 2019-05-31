@@ -170,28 +170,28 @@ handleUnknownSyscall(word_t w)
         return EXCEPTION_NONE;
     } else if (w == SysBenchmarkResetLog) {
 #ifdef CONFIG_BENCHMARK_USE_KERNEL_LOG_BUFFER
-        if (ksUserLogBuffer == 0) {
+        if (NODE_STATE(ksUserLogBuffer) == 0) {
             userError("A user-level buffer has to be set before resetting benchmark.\
                     Use seL4_BenchmarkSetLogBuffer\n");
             setRegister(NODE_STATE(ksCurThread), capRegister, seL4_IllegalOperation);
             return EXCEPTION_SYSCALL_ERROR;
         }
 
-        ksLogIndex = 0;
+        NODE_STATE(ksLogIndex) = 0;
 #endif /* CONFIG_BENCHMARK_USE_KERNEL_LOG_BUFFER */
 #ifdef CONFIG_BENCHMARK_TRACK_UTILISATION
-        benchmark_log_utilisation_enabled = true;
+        NODE_STATE(benchmark_log_utilisation_enabled) = true;
         NODE_STATE(ksIdleThread)->benchmark.utilisation = 0;
-        NODE_STATE(ksCurThread)->benchmark.schedule_start_time = ksEnter;
-        benchmark_start_time = ksEnter;
+        NODE_STATE(ksCurThread)->benchmark.schedule_start_time = NODE_STATE(ksEnter);
+        NODE_STATE(benchmark_start_time) = NODE_STATE(ksEnter);
         benchmark_arch_utilisation_reset();
 #endif /* CONFIG_BENCHMARK_TRACK_UTILISATION */
         setRegister(NODE_STATE(ksCurThread), capRegister, seL4_NoError);
         return EXCEPTION_NONE;
     } else if (w == SysBenchmarkFinalizeLog) {
 #ifdef CONFIG_BENCHMARK_USE_KERNEL_LOG_BUFFER
-        ksLogIndexFinalized = ksLogIndex;
-        setRegister(NODE_STATE(ksCurThread), capRegister, ksLogIndexFinalized);
+        NODE_STATE(ksLogIndexFinalized) = NODE_STATE(ksLogIndex);
+        setRegister(NODE_STATE(ksCurThread), capRegister, NODE_STATE(ksLogIndexFinalized));
 #endif /* CONFIG_BENCHMARK_USE_KERNEL_LOG_BUFFER */
 #ifdef CONFIG_BENCHMARK_TRACK_UTILISATION
         benchmark_utilisation_finalise();

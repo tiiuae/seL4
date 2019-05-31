@@ -13,11 +13,9 @@
 
 #ifdef CONFIG_BENCHMARK_TRACK_UTILISATION
 
-bool_t benchmark_log_utilisation_enabled;
-timestamp_t ksEnter;
-timestamp_t benchmark_start_time;
-timestamp_t benchmark_end_time;
-
+/* This uses the IPC Buffer to pass arguments to userspace, so developers need to ensure
+ * that the total size of all arguments are less than the size of the userspace IPC Buffer.
+ */
 void benchmark_track_utilisation_dump(void)
 {
     uint64_t *buffer = ((uint64_t *) & (((seL4_IPCBuffer *)lookupIPCBuffer(true, NODE_STATE(ksCurThread)))->msg[0]));
@@ -45,11 +43,20 @@ void benchmark_track_utilisation_dump(void)
 
 #ifdef CONFIG_ARM_ENABLE_PMU_OVERFLOW_INTERRUPT
     buffer[BENCHMARK_TOTAL_UTILISATION] =
-        (ccnt_num_overflows * 0xFFFFFFFFU) + benchmark_end_time - benchmark_start_time;
+        (ccnt_num_overflows * 0xFFFFFFFFU) + NODE_STATE(benchmark_end_time) - NODE_STATE(benchmark_start_time);
 #else
-    buffer[BENCHMARK_TOTAL_UTILISATION] = benchmark_end_time - benchmark_start_time; /* Overall time */
+    buffer[BENCHMARK_TOTAL_UTILISATION] = NODE_STATE(benchmark_end_time) - NODE_STATE(benchmark_start_time); /* Overall time */
 #endif /* CONFIG_ARM_ENABLE_PMU_OVERFLOW_INTERRUPT */
 
+#ifdef CONFIG_DEBUG_BUILD
+    strlcpy((char*) &buffer[BENCHMARK_TCB_NAME], tcb->tcbName, TCB_NAME_LENGTH);
+#endif  /* CONFIG_DEBUG_BUILD */
+
+    buffer[BENCHMARK_TCB_CORE] = tcb->tcbAffinity;
+
+#ifdef CONFIG_VTX
+    buffer[BENCHMARK_VCPU_UTILISATION] = tcb->benchmark.vcpu_utilisation;
+#endif
 }
 
 void benchmark_track_reset_utilisation(void)
@@ -71,5 +78,13 @@ void benchmark_track_reset_utilisation(void)
 
     tcb->benchmark.utilisation = 0;
     tcb->benchmark.schedule_start_time = 0;
+#ifdef CONFIG_VTX
+    tcb->benchmark.vcpu_utilisation = 0;
+    if (thread_state_ptr_get_tsType(&tcb->tcbState) == ThreadState_RunningVM) {
+        tcb->benchmark.vcpu_start_time = NODE_STATE(ksEnter);
+    } else {
+        tcb->benchmark.vcpu_start_time = 0;
+    }
+#endif
 }
 #endif /* CONFIG_BENCHMARK_TRACK_UTILISATION */

@@ -18,6 +18,7 @@
 #include <object/structures.h>
 #include <object/tcb.h>
 #include <mode/types.h>
+#include <benchmark/benchmark_track_types.h>
 
 #ifdef ENABLE_SMP_SUPPORT
 #define NODE_STATE_BEGIN(_name)                 typedef struct _name {
@@ -74,6 +75,23 @@ NODE_STATE_DECLARE(time_t, ksConsumed);
 NODE_STATE_DECLARE(time_t, ksCurTime);
 NODE_STATE_DECLARE(bool_t, ksReprogram);
 NODE_STATE_DECLARE(sched_context_t, *ksCurSC);
+
+#ifdef CONFIG_BENCHMARK_TRACK_UTILISATION
+NODE_STATE_DECLARE(bool_t, benchmark_log_utilisation_enabled);
+NODE_STATE_DECLARE(timestamp_t, benchmark_start_time);
+NODE_STATE_DECLARE(timestamp_t, benchmark_end_time);
+#endif
+
+#if (defined CONFIG_DEBUG_BUILD || defined CONFIG_BENCHMARK_TRACK_KERNEL_ENTRIES)
+NODE_STATE_DECLARE(timestamp_t, ksEnter);
+NODE_STATE_DECLARE(kernel_entry_t, ksKernelEntry);
+#endif /* DEBUG */
+
+#ifdef CONFIG_BENCHMARK_TRACK_KERNEL_ENTRIES
+NODE_STATE_DECLARE(seL4_Word, ksLogIndex);
+NODE_STATE_DECLARE(seL4_Word, ksLogIndexFinalized);
+NODE_STATE_DECLARE(paddr_t, ksUserLogBuffer);
+#endif
 
 #ifdef CONFIG_HAVE_FPU
 /* Current state installed in the FPU, or NULL if the FPU is currently invalid */

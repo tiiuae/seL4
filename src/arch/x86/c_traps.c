@@ -51,37 +51,37 @@ c_handle_interrupt(int irq, int syscall)
     if (irq == int_unimpl_dev) {
         handleFPUFault();
 #ifdef TRACK_KERNEL_ENTRIES
-        ksKernelEntry.path = Entry_UnimplementedDevice;
-        ksKernelEntry.word = irq;
+        NODE_STATE(ksKernelEntry).path = Entry_UnimplementedDevice;
+        NODE_STATE(ksKernelEntry).word = irq;
 #endif
     } else if (irq == int_page_fault) {
         /* Error code is in Error. Pull out bit 5, which is whether it was instruction or data */
         vm_fault_type_t type = (NODE_STATE(ksCurThread)->tcbArch.tcbContext.registers[Error] >> 4u) & 1u;
 #ifdef TRACK_KERNEL_ENTRIES
-        ksKernelEntry.path = Entry_VMFault;
-        ksKernelEntry.word = type;
+        NODE_STATE(ksKernelEntry).path = Entry_VMFault;
+        NODE_STATE(ksKernelEntry).word = type;
 #endif
         handleVMFaultEvent(type);
 #ifdef CONFIG_HARDWARE_DEBUG_API
     } else if (irq == int_debug || irq == int_software_break_request) {
         /* Debug exception */
 #ifdef TRACK_KERNEL_ENTRIES
-        ksKernelEntry.path = Entry_DebugFault;
-        ksKernelEntry.word = NODE_STATE(ksCurThread)->tcbArch.tcbContext.registers[FaultIP];
+        NODE_STATE(ksKernelEntry).path = Entry_DebugFault;
+        NODE_STATE(ksKernelEntry).word = NODE_STATE(ksCurThread)->tcbArch.tcbContext.registers[FaultIP];
 #endif
         handleUserLevelDebugException(irq);
 #endif /* CONFIG_HARDWARE_DEBUG_API */
     } else if (irq < int_irq_min) {
 #ifdef TRACK_KERNEL_ENTRIES
-        ksKernelEntry.path = Entry_UserLevelFault;
-        ksKernelEntry.word = irq;
+        NODE_STATE(ksKernelEntry).path = Entry_UserLevelFault;
+        NODE_STATE(ksKernelEntry).word = irq;
 #endif
         handleUserLevelFault(irq, NODE_STATE(ksCurThread)->tcbArch.tcbContext.registers[Error]);
     } else if (likely(irq < int_trap_min)) {
         ARCH_NODE_STATE(x86KScurInterrupt) = irq;
 #ifdef TRACK_KERNEL_ENTRIES
-        ksKernelEntry.path = Entry_Interrupt;
-        ksKernelEntry.word = irq;
+        NODE_STATE(ksKernelEntry).path = Entry_Interrupt;
+        NODE_STATE(ksKernelEntry).word = irq;
 #endif
         handleInterruptEntry();
         /* check for other pending interrupts */
@@ -97,8 +97,8 @@ c_handle_interrupt(int irq, int syscall)
         /* trap number is MSBs of the syscall number and the LSBS of EAX */
         sys_num = (irq << 24) | (syscall & 0x00ffffff);
 #ifdef TRACK_KERNEL_ENTRIES
-        ksKernelEntry.path = Entry_UnknownSyscall;
-        ksKernelEntry.word = sys_num;
+        NODE_STATE(ksKernelEntry).path = Entry_UnknownSyscall;
+        NODE_STATE(ksKernelEntry).word = sys_num;
 #endif
         handleUnknownSyscall(sys_num);
     }
@@ -129,13 +129,13 @@ slowpath(syscall_t syscall)
     /* check for undefined syscall */
     if (unlikely(syscall < SYSCALL_MIN || syscall > SYSCALL_MAX)) {
 #ifdef TRACK_KERNEL_ENTRIES
-        ksKernelEntry.path = Entry_UnknownSyscall;
+        NODE_STATE(ksKernelEntry).path = Entry_UnknownSyscall;
         /* ksKernelEntry.word word is already set to syscall */
 #endif /* TRACK_KERNEL_ENTRIES */
         handleUnknownSyscall(syscall);
     } else {
 #ifdef TRACK_KERNEL_ENTRIES
-        ksKernelEntry.is_fastpath = 0;
+        NODE_STATE(ksKernelEntry).is_fastpath = 0;
 #endif /* TRACK KERNEL ENTRIES */
         handleSyscall(syscall);
     }
@@ -159,7 +159,7 @@ c_handle_syscall(word_t cptr, word_t msgInfo, syscall_t syscall, word_t reply)
 
 #ifdef TRACK_KERNEL_ENTRIES
     benchmark_debug_syscall_start(cptr, msgInfo, syscall);
-    ksKernelEntry.is_fastpath = 1;
+    NODE_STATE(ksKernelEntry).is_fastpath = 1;
 #endif /* TRACK_KERNEL_ENTRIES */
 
     if (config_set(CONFIG_SYSENTER)) {
@@ -187,7 +187,7 @@ c_handle_syscall(word_t cptr, word_t msgInfo, syscall_t syscall, word_t reply)
 void VISIBLE NORETURN c_handle_vmexit(void)
 {
 #ifdef TRACK_KERNEL_ENTRIES
-    ksKernelEntry.path = Entry_VMExit;
+    NODE_STATE(ksKernelEntry).path = Entry_VMExit;
 #endif
 
     /* We *always* need to flush the rsb as a guest may have been able to train the rsb with kernel addresses */

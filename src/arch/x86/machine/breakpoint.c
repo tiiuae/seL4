@@ -616,8 +616,8 @@ handleUserLevelDebugException(int int_vector)
     testAndResetSingleStepException_t single_step_info;
 
 #if defined(CONFIG_DEBUG_BUILD) || defined(CONFIG_BENCHMARK_TRACK_KERNEL_ENTRIES)
-    ksKernelEntry.path = Entry_UserLevelFault;
-    ksKernelEntry.word = int_vector;
+    NODE_STATE(ksKernelEntry).path = Entry_UserLevelFault;
+    NODE_STATE(ksKernelEntry).word = int_vector;
 #else
     (void)int_vector;
 #endif /* DEBUG */
