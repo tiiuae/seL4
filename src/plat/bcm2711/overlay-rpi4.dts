@@ -18,7 +18,31 @@
 	};
 
 	memory@0 {
-		/* This is configurable in the Pi's config.txt, but we use 128MiB of RAM by default. */
-		reg = <0x00 0x00000000 0x08000000>;
+        /* 
+         * See BCM2711 TRM section 1.2 and 
+         * https://github.com/raspberrypi/firmware/issues/1374 for
+         * reference.
+         */
+         
+         /* RPi4B seems to be in "low peripheral" mode by default. 
+          * These values were observed from running
+          * Raspbian instance from /proc/iomem and /sys/firmware/devicetree/base
+          *
+          * Set gpu_mem=128 so we have following memory ranges available
+          * VC GPU RAM 128MiB -> 0x40000000-0x8000000 = 0x38000000
+          * 
+          * TODO: seL4 platform_gen.py errors about region
+          * bounds not being in strictly increasing order if the 
+          * last 2 2048MiB regions are defined?
+          * 
+          * 0x00 0x00000000 0x38000000  896MiB 
+          * 0x00 0x40000000 0xfc000000  4032MiB 
+          * 0x01 0x00000000 0x80000000  2048MiB 
+          * 0x01 0x80000000 0x80000000  2048MiB 
+          *
+          *   reg = < 0x00 0x40000000 0x40000000 >; 1GB
+          */
+        reg = <0x00 0x00000000 0x38000000
+               0x00 0x40000000 0xfc000000>;
 	};
 };
