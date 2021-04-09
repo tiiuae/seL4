@@ -18,7 +18,27 @@
 	};
 
 	memory@0 {
-		/* This is configurable in the Pi's config.txt, but we use 128MiB of RAM by default. */
-		reg = <0x00 0x00000000 0x08000000>;
+        /*
+         * See BCM2711 TRM section 1.2 and
+         * https://github.com/raspberrypi/firmware/issues/1374 for
+         * reference.
+         */
+
+         /* RPi4B seems to be in "low peripheral" mode by default.
+          * These values were observed from running
+          * Raspbian instance from /proc/iomem and /sys/firmware/devicetree/base
+          *
+          * Set gpu_mem=64 so we have following memory ranges available
+          * VC GPU RAM 64MB -> 0x40000000-0x04000000 = 0x3c000000
+          *
+          * 0x00 0x00000000 0x3c000000  960MB
+          * 0x00 0x40000000 0xbc000000  3008MB
+          * 0x01 0x00000000 0x80000000  2048MB
+          * 0x01 0x80000000 0x80000000  2048MB
+          */
+        reg = < 0x00 0x00000000 0x3c000000 /* 960MB */
+                0x00 0x40000000 0xbc000000 /* 3008MB */
+                0x01 0x00000000 0x80000000 /* 2048MB */
+                0x01 0x80000000 0x80000000 /* 2048MB */ >;
 	};
 };
