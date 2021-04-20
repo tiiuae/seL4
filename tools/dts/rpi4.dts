@@ -1091,7 +1091,7 @@
 			clocks = <0x06 0x13 0x06 0x14>;
 			clock-names = "uartclk\0apb_pclk";
 			arm,primecell-periphid = <0x241011>;
-			status = "okay";
+			status = "disabled";
 		};
 
 		serial@7e201600 {
