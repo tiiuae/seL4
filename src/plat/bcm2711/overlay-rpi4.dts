@@ -42,7 +42,8 @@
           * /home/joonaso/proj/camkes-vm-rpi4-port/tools/seL4/elfloader-tool/../cmake-tool/helpers/platform_sift.py: file "/home/joonaso/proj/camkes-vm-rpi4-port/build/kernel/gen_headers/plat/machine/platform_gen.yaml": \
           * region bounds are not in strictly increasing order (6442450944 not > 6442450944)" <-- ??
           *
-          *
+          * HACK: reduce the other 2GB region by 1MB resulting the regions to be
+          * in increasing order as seL4 wants :)
           * 
           * 0x00 0x00000000 0x3c000000  960MB 
           * 0x00 0x40000000 0xbc000000  3008MB 
@@ -52,6 +53,7 @@
           */
         reg = < 0x00 0x00000000 0x3c000000 /* 960MB */
                 0x00 0x40000000 0xbc000000 /* 3008MB */
-                0x01 0x00000000 0x80000000 /* 2048MB */ >;
+                0x01 0x00000000 0x7ff00000 /* 2047MB */
+                0x01 0x80000000 0x80000000 /* 2048MB */ >;
 	};
 };
