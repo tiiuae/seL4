@@ -77,6 +77,7 @@ if(KernelArchX86)
 endif()
 if(KernelArchARM)
     set(arm_march "${KernelArmArmV}${KernelArmMachFeatureModifiers}")
+    string(APPEND c_common_flags " -mno-outline-atomics")
     string(APPEND c_common_flags " -march=${arm_march}")
     string(APPEND asm_common_flags " -march=${arm_march}")
     # Explicitly request ARM instead of THUMB for compilation. This option is not
