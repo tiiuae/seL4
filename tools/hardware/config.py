@@ -35,6 +35,9 @@ class ARMConfig(Config):
     SUPERSECTION_BITS = 24
     arch = 'arm'
 
+    def get_bootloader_reserve(self) -> int:
+        return 0x200
+
     def get_kernel_phys_align(self) -> int:
         ''' on ARM the ELF loader expects to be able to map a supersection page to load the kernel. '''
         return self.SUPERSECTION_BITS
