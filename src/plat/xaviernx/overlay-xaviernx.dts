@@ -1,0 +1,27 @@
+/ {
+	chosen {
+		seL4,boot-cpu = <&{/cpus/cpu@0}>;
+		seL4,elfloader-devices =
+		    &{/tcu},
+		    &{/psci};
+		seL4,kernel-devices =
+		    &{/tcu},
+		    &{/interrupt-controller@3881000},
+		    &{/timer};
+	};
+
+        tcu {
+	    compatible = "nvidia,tegra194-tcu";
+            reg = <0x00 0x0c168000 0x00 0x1000>;
+	};
+
+	memory@80000000 {
+		/* provided by bootloader, not in DTS? */
+                device_type = "memory";
+
+		reg = <0x00 0x80000000 0x00 0x2c000000>,
+                      <0x00 0xac200000 0x00 0x44600000>,
+                      <0x01 0x00000000 0x01 0x80000000>;
+	};
+};
+
