@@ -1,0 +1,487 @@
+/dts-v1/;
+
+/ {
+	compatible = "nvidia,tegra194";
+	interrupt-parent = <0x1>;
+	#address-cells = <0x2>;
+	#size-cells = <0x2>;
+
+	chosen {
+		stdout-path = "/serial@3100000";
+	};
+
+	aliases {
+		serial0 = "/serial@3100000";
+	};
+
+	cpus {
+		#address-cells = <0x2>;
+		#size-cells = <0x0>;
+
+		cpu@1 {
+			compatible = "nvidia,carmel", "arm,armv8";
+			cpu-idle-states = <0x7e 0x7f>;
+			device_type = "cpu";
+			l2-cache = <0x80>;
+			sched-energy-costs = <0x81 0x81>;
+			capacity-dmips-mhz = <0x400>;
+			i-cache-line-size = <0x40>;
+			enable-method = "psci";
+			status = "okay";
+			phandle = <0x77>;
+			reg = <0x0 0x1>;
+			linux,phandle = <0x77>;
+			d-cache-size = <0x10000>;
+			i-cache-size = <0x20000>;
+			d-cache-sets = <0x100>;
+			i-cache-sets = <0x200>;
+			d-cache-line-size = <0x40>;
+		};
+
+		cpu@101 {
+			compatible = "nvidia,carmel", "arm,armv8";
+			cpu-idle-states = <0x7e 0x7f>;
+			device_type = "cpu";
+			l2-cache = <0x82>;
+			sched-energy-costs = <0x81 0x81>;
+			capacity-dmips-mhz = <0x400>;
+			i-cache-line-size = <0x40>;
+			enable-method = "psci";
+			status = "okay";
+			phandle = <0x79>;
+			reg = <0x0 0x101>;
+			linux,phandle = <0x79>;
+			d-cache-size = <0x10000>;
+			i-cache-size = <0x20000>;
+			d-cache-sets = <0x100>;
+			i-cache-sets = <0x200>;
+			d-cache-line-size = <0x40>;
+		};
+
+		cpu-map {
+
+			cluster1 {
+
+				core0 {
+					cpu = <0x78>;
+				};
+
+				core1 {
+					cpu = <0x79>;
+				};
+			};
+
+			cluster2 {
+
+				core0 {
+					cpu = <0x7a>;
+				};
+
+				core1 {
+					cpu = <0x7b>;
+				};
+			};
+
+			cluster0 {
+
+				core0 {
+					cpu = <0x76>;
+				};
+
+				core1 {
+					cpu = <0x77>;
+				};
+			};
+		};
+
+		cpu@200 {
+			compatible = "nvidia,carmel", "arm,armv8";
+			cpu-idle-states = <0x7e 0x7f>;
+			device_type = "cpu";
+			l2-cache = <0x83>;
+			sched-energy-costs = <0x81 0x81>;
+			capacity-dmips-mhz = <0x400>;
+			i-cache-line-size = <0x40>;
+			enable-method = "psci";
+			status = "okay";
+			phandle = <0x7a>;
+			reg = <0x0 0x200>;
+			linux,phandle = <0x7a>;
+			d-cache-size = <0x10000>;
+			i-cache-size = <0x20000>;
+			d-cache-sets = <0x100>;
+			i-cache-sets = <0x200>;
+			d-cache-line-size = <0x40>;
+		};
+
+		cpu_cluster_power_states {
+			compatible = "nvidia,tegra194-cpuidle-cluster";
+
+			cc6 {
+				state-name = "Cluster powergate";
+				power = <0x13>;
+				pmstate = <0x6>;
+				status = "okay";
+				wakeup-latency-us = <0x1388>;
+				min-residency-us = <0xffffffff>;
+			};
+		};
+
+		cpu@0 {
+			compatible = "nvidia,carmel", "arm,armv8";
+			cpu-idle-states = <0x7e 0x7f>;
+			device_type = "cpu";
+			l2-cache = <0x80>;
+			sched-energy-costs = <0x81 0x81>;
+			capacity-dmips-mhz = <0x400>;
+			i-cache-line-size = <0x40>;
+			enable-method = "psci";
+			phandle = <0x76>;
+			reg = <0x0 0x0>;
+			linux,phandle = <0x76>;
+			d-cache-size = <0x10000>;
+			i-cache-size = <0x20000>;
+			d-cache-sets = <0x100>;
+			i-cache-sets = <0x200>;
+			d-cache-line-size = <0x40>;
+		};
+
+		cpu_crossover_thresholds {
+			compatible = "nvidia,tegra194-cpuidle-thresholds";
+
+			thresholds {
+				crossover_c1_c6 = <0x7530>;
+				crossover_cc1_cc6 = <0x13880>;
+			};
+		};
+
+		cpu@100 {
+			compatible = "nvidia,carmel", "arm,armv8";
+			cpu-idle-states = <0x7e 0x7f>;
+			device_type = "cpu";
+			l2-cache = <0x82>;
+			sched-energy-costs = <0x81 0x81>;
+			capacity-dmips-mhz = <0x400>;
+			i-cache-line-size = <0x40>;
+			enable-method = "psci";
+			status = "okay";
+			phandle = <0x78>;
+			reg = <0x0 0x100>;
+			linux,phandle = <0x78>;
+			d-cache-size = <0x10000>;
+			i-cache-size = <0x20000>;
+			d-cache-sets = <0x100>;
+			i-cache-sets = <0x200>;
+			d-cache-line-size = <0x40>;
+		};
+
+		cpu_core_power_states {
+			compatible = "nvidia,tegra194-cpuidle-core";
+			phandle = <0x150>;
+			linux,phandle = <0x150>;
+
+			c1 {
+				compatible = "nvidia,tegra194-cpuidle-core";
+				state-name = "Clock gated";
+				power = <0x46>;
+				pmstate = <0x1>;
+				status = "okay";
+				wakeup-latency-us = <0x1>;
+				phandle = <0x151>;
+				linux,phandle = <0x151>;
+				min-residency-us = <0x1>;
+			};
+
+			c6 {
+				compatible = "nvidia,tegra194-cpuidle-core";
+				state-name = "Virtual core powergate";
+				arm,psci-suspend-param = <0x6>;
+				power = <0x3c>;
+				pmstate = <0x6>;
+				status = "okay";
+				wakeup-latency-us = <0x7d0>;
+				phandle = <0x7e>;
+				linux,phandle = <0x7e>;
+				min-residency-us = <0xffffffff>;
+			};
+
+			c7 {
+				compatible = "nvidia,tegra194-cpuidle-core";
+				state-name = "Core powergate";
+				arm,psci-suspend-param = <0x40000007>;
+				power = <0x3c>;
+				pmstate = <0x7>;
+				status = "disabled";
+				wakeup-latency-us = <0x230>;
+				phandle = <0x7f>;
+				linux,phandle = <0x7f>;
+				min-residency-us = <0xffffffff>;
+			};
+		};
+
+		cpu@201 {
+			compatible = "nvidia,carmel", "arm,armv8";
+			cpu-idle-states = <0x7e 0x7f>;
+			device_type = "cpu";
+			l2-cache = <0x83>;
+			sched-energy-costs = <0x81 0x81>;
+			capacity-dmips-mhz = <0x400>;
+			i-cache-line-size = <0x40>;
+			enable-method = "psci";
+			status = "okay";
+			phandle = <0x7b>;
+			reg = <0x0 0x201>;
+			linux,phandle = <0x7b>;
+			d-cache-size = <0x10000>;
+			i-cache-size = <0x20000>;
+			d-cache-sets = <0x100>;
+			i-cache-sets = <0x200>;
+			d-cache-line-size = <0x40>;
+		};
+	};
+
+	psci {
+		compatible = "arm,psci-1.0";
+		cpu_suspend = <0xc4000001>;
+		cpu_on = <0xc4000003>;
+		status = "okay";
+		cpu_off = <0x84000002>;
+		method = "smc";
+	};
+
+	timer {
+		compatible = "arm,armv8-timer";
+		status = "okay";
+		interrupts = <0x1 0xd 0xff08 0x1 0xe 0xff08 0x1 0xb 0xff08 0x1 0xa 0xff08>;
+	};
+
+	/* in Linux device tree, this is called timer@3010000 and it is disabled, the comment saying
+	 * that ARM generic timer should be used instead.
+	 */
+	timer@3020000 {
+		compatible = "nvidia,tegra186-timer";
+		interrupts = < 0x00 0x00 0x04 0x00 0x01 0x04 0x00 0x02 0x04 0x00 0x03 0x04 0x00 0x04 0x04 0x00 0x05 0x04 0x00 0x06 0x04 >;
+		clock-frequency = < 0x124f800 >;
+		reg = < 0x00 0x3010000 0x00 0xe0000 >;
+		tmr-count = < 0x0a >;
+		wdt-count = < 0x03 >;
+		status = "okay";
+	};
+
+	interrupt-controller@3881000 {
+		compatible = "arm,cortex-a15-gic";
+		status = "okay";
+		#interrupt-cells = <0x3>;
+		interrupt-parent = <0x1>;
+		interrupts = <0x1 0x9 0xff04>;
+		phandle = <0x1>;
+		reg = <0x0 0x3881000 0x0 0x1000 0x0 0x3882000 0x0 0x2000 0x0 0x3884000 0x0 0x2000 0x0 0x3886000 0x0 0x2000>;
+		linux,phandle = <0x1>;
+		interrupt-controller;
+	};
+
+	serial@3100000 {
+		compatible = "nvidia,tegra20-uart","nvidia,tegra186-hsuart";
+		#stream-id-cells = < 0x01 >;
+		reg = < 0x00 0x3100000 0x00 0x40 >;
+		reg-shift = < 0x02 >;
+		interrupts = < 0x00 0x70 0x04 >;
+		nvidia,memory-clients = < 0x0e >;
+		dmas = < 0x19 0x08 0x19 0x08 >;
+		dma-names = "rx","tx";
+		clocks = < 0x0d 0x37 0x0d 0x10d >;
+		clock-names = "serial","parent";
+		resets = < 0x0d 0x2f >;
+		reset-names = "serial";
+		status = "okay";
+		nvidia,adjust-baud-rates = < 0x1c200 0x1c200 0x64 >;
+		console-port;
+		sqa-automation-port;
+	};
+
+	serial@3110000 {
+		compatible = "nvidia,tegra186-hsuart";
+		#stream-id-cells = < 0x01 >;
+		reg = < 0x00 0x3110000 0x00 0x40 >;
+		reg-shift = < 0x02 >;
+		interrupts = < 0x00 0x71 0x04 >;
+		nvidia,memory-clients = < 0x0e >;
+		dmas = < 0x19 0x09 0x19 0x09 >;
+		dma-names = "rx","tx";
+		clocks = < 0x0d 0x38 0x0d 0x10d >;
+		clock-names = "serial","parent";
+		resets = < 0x0d 0x30 >;
+		reset-names = "serial";
+		status = "okay";
+		nvidia,adjust-baud-rates = < 0x1c200 0x1c200 0x64 >;
+	};
+
+	serial@c280000 {
+		compatible = "nvidia,tegra186-hsuart";
+		#stream-id-cells = < 0x01 >;
+		reg = < 0x00 0xc280000 0x00 0x40 >;
+		reg-shift = < 0x02 >;
+		interrupts = < 0x00 0x72 0x04 >;
+		nvidia,memory-clients = < 0x0e >;
+		dmas = < 0x19 0x03 0x19 0x03 >;
+		dma-names = "rx","tx";
+		clocks = < 0x0d 0xd7 0x0d 0x10d >;
+		clock-names = "serial","parent";
+		resets = < 0x0d 0x31 >;
+		reset-names = "serial";
+		status = "okay";
+		nvidia,adjust-baud-rates = < 0x1c200 0x1c200 0x64 >;
+	};
+
+	serial@3130000 {
+		compatible = "nvidia,tegra186-hsuart";
+		#stream-id-cells = < 0x01 >;
+		reg = < 0x00 0x3130000 0x00 0x40 >;
+		reg-shift = < 0x02 >;
+		interrupts = < 0x00 0x73 0x04 >;
+		nvidia,memory-clients = < 0x0e >;
+		dmas = < 0x19 0x13 0x19 0x13 >;
+		dma-names = "tx";
+		clocks = < 0x0d 0x4d 0x0d 0x10d >;
+		clock-names = "serial","parent";
+		resets = < 0x0d 0x32 >;
+		reset-names = "serial";
+		status = "okay";
+		nvidia,adjust-baud-rates = < 0x1c200 0x1c200 0x64 >;
+	};
+
+	serial@3140000 {
+		compatible = "nvidia,tegra186-hsuart";
+		#stream-id-cells = < 0x01 >;
+		reg = < 0x00 0x3140000 0x00 0x40 >;
+		reg-shift = < 0x02 >;
+		interrupts = < 0x00 0x74 0x04 >;
+		nvidia,memory-clients = < 0x0e >;
+		dmas = < 0x19 0x14 0x19 0x14 >;
+		dma-names = "rx","tx";
+		clocks = < 0x0d 0xc2 0x0d 0x10d >;
+		clock-names = "serial","parent";
+		resets = < 0x0d 0x84 >;
+		reset-names = "serial";
+		status = "disabled";
+		nvidia,adjust-baud-rates = < 0x1c200 0x1c200 0x64 >;
+	};
+
+	serial@3150000 {
+		compatible = "nvidia,tegra186-hsuart";
+		#stream-id-cells = < 0x01 >;
+		reg = < 0x00 0x3150000 0x00 0x40 >;
+		reg-shift = < 0x02 >;
+		interrupts = < 0x00 0x75 0x04 >;
+		nvidia,memory-clients = < 0x0e >;
+		dmas = < 0x19 0x0c 0x19 0x0c >;
+		dma-names = "rx","tx";
+		clocks = < 0x0d 0xc3 0x0d 0x10d >;
+		clock-names = "serial","parent";
+		resets = < 0x0d 0x6f >;
+		reset-names = "serial";
+		status = "disabled";
+		nvidia,adjust-baud-rates = < 0x1c200 0x1c200 0x64 >;
+	};
+
+	serial@c290000 {
+		compatible = "nvidia,tegra186-hsuart";
+		#stream-id-cells = < 0x01 >;
+		reg = < 0x00 0xc290000 0x00 0x40 >;
+		reg-shift = < 0x02 >;
+		interrupts = < 0x00 0x76 0x04 >;
+		nvidia,memory-clients = < 0x0e >;
+		dmas = < 0x19 0x02 0x19 0x02 >;
+		dma-names = "rx","tx";
+		clocks = < 0x0d 0xd8 0x0d 0x10d >;
+		clock-names = "serial","parent";
+		resets = < 0x0d 0x70 >;
+		reset-names = "serial";
+		status = "disabled";
+		nvidia,adjust-baud-rates = < 0x1c200 0x1c200 0x64 >;
+	};
+
+
+	reserved-memory {
+		ranges;
+		#address-cells = <0x2>;
+		#size-cells = <0x2>;
+
+		fb3_carveout {
+			reg-names = "surface", "lut";
+			no-map;
+			phandle = <0x53>;
+			reg = <0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0>;
+			linux,phandle = <0x53>;
+		};
+
+		fb0_carveout {
+			reg-names = "surface", "lut";
+			no-map;
+			phandle = <0x50>;
+			reg = <0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0>;
+			linux,phandle = <0x50>;
+		};
+
+		ramoops_carveout {
+			compatible = "nvidia,ramoops";
+			alignment = <0x0 0x10000>;
+			alloc-ranges = <0x0 0x0 0x1 0x0>;
+			status = "okay";
+			no-map;
+			size = <0x0 0x200000>;
+			phandle = <0x154>;
+			linux,phandle = <0x154>;
+		};
+
+		vpr-carveout {
+			reusable;
+			compatible = "nvidia,vpr-carveout";
+			alignment = <0x0 0x400000>;
+			alloc-ranges = <0x0 0x80000000 0x0 0x70000000>;
+			size = <0x0 0x2a000000>;
+			phandle = <0x155>;
+			linux,phandle = <0x155>;
+		};
+
+		fb1_carveout {
+			reg-names = "surface", "lut";
+			no-map;
+			phandle = <0x51>;
+			reg = <0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0>;
+			linux,phandle = <0x51>;
+		};
+
+		grid-of-semaphores {
+			compatible = "nvidia,gosmem";
+			alignment = <0x0 0x1000>;
+			status = "okay";
+			no-map;
+			size = <0x0 0x6000>;
+			phandle = <0x9f>;
+			reg = <0x0 0x40040000 0x0 0x6000>;
+			linux,phandle = <0x9f>;
+			cvdevs = <0x9b 0x9c 0x9d 0x9e 0x6c 0x6f>;
+		};
+
+		fb2_carveout {
+			reg-names = "surface", "lut";
+			no-map;
+			phandle = <0x52>;
+			reg = <0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0>;
+			linux,phandle = <0x52>;
+		};
+
+		generic_carveout {
+			compatible = "nvidia,generic_carveout";
+			alignment = <0x0 0x100000>;
+			alloc-ranges = <0x0 0x0 0x1 0x0>;
+			status = "disabled";
+			no-map;
+			size = <0x0 0x0>;
+			phandle = <0xa0>;
+			linux,phandle = <0xa0>;
+		};
+	};
+
+};
