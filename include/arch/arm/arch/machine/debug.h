@@ -188,6 +188,8 @@ static inline syscall_error_t Arch_decodeSetBreakpoint(tcb_t *t,
 
     bp_num = convertBpNumToArch(bp_num);
 
+    // TODO: report bug below
+    
     if (type == seL4_DataBreakpoint) {
         if (bp_num >= seL4_NumExclusiveWatchpoints) {
             userError("Debug: invalid data-watchpoint number %u.", bp_num);
