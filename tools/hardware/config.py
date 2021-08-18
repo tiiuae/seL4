@@ -36,7 +36,7 @@ class ARMConfig(Config):
     arch = 'arm'
 
     def get_bootloader_reserve(self) -> int:
-        return 0x200
+        return 0x200 + (16777216*7)
 
     def get_kernel_phys_align(self) -> int:
         ''' on ARM the ELF loader expects to be able to map a supersection page to load the kernel. '''
