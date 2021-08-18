@@ -19,6 +19,12 @@ register_driver(
     CFILES "tegra_omap3_dwapb.c"
 )
 register_driver(
+    compatibility_strings "nvidia,tegra194-tcu"
+    PREFIX src/drivers/serial
+    CFILES "tegra194-tcu.c"
+)
+
+register_driver(
     compatibility_strings "fsl,imx6q-uart;fsl,imx6sx-uart"
     PREFIX src/drivers/serial
     CFILES "imx.c"
