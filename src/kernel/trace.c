@@ -5,8 +5,8 @@ typedef struct {
 	unsigned long func;
 } trace_entry_t;
 
-unsigned int te_head[4] = {0};
-trace_entry_t tes[4][1024];
+unsigned int te_head[CONFIG_MAX_NUM_NODES] = {0};
+trace_entry_t tes[CONFIG_MAX_NUM_NODES][1024];
 
 void __cyg_profile_func_enter(void *thisfn, void *call_site)
 {
