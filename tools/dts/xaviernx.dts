@@ -482,6 +482,11 @@
 			phandle = <0xa0>;
 			linux,phandle = <0xa0>;
 		};
+
+                cboot_hack_carveout {
+                        reg = < 0x00 0x80000000 0x00 0x08000000 >;
+                        no-map;
+                };
 	};
 
 };
