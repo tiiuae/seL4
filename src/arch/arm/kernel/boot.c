@@ -139,6 +139,58 @@ BOOT_CODE static void init_smmu(cap_t root_cnode_cap)
 
 #endif
 
+void tii_put_uint(unsigned int x);
+void tii_put_string(const char *str);
+void tcu_console_putchar(const char ch);
+
+void tii_put_uint(unsigned int x)
+{
+	if (x >= 10)
+		tii_put_uint(x / 10);
+	tcu_console_putchar('0' + (x % 10));
+}
+
+void tii_put_string(const char *str)
+{
+	while (*str)
+		tcu_console_putchar(*str++);
+}
+
+//#define TII_TESTING
+//#define TII_TESTING_BEFORE_MMU
+
+void tcu_console_putchar(const char ch)
+{
+#ifdef TII_TESTING_BEFORE_MMU
+        volatile uint32_t *txp = ((uint32_t *) 0x0c168000);
+#else
+        volatile uint32_t *txp = ((uint32_t *) UART_PPTR);
+#endif
+
+	if (ch == '\n')
+		tcu_console_putchar('\r');
+
+        while (*txp & 0x80000000);
+
+        *txp = ((uint32_t) ch) |
+                (0x81 << 24);
+
+        while (*txp & 0x80000000);
+}
+
+void tii_testing_print_loop(void);
+
+void tii_testing_print_loop(void)
+{
+	int i;
+
+	for (i = 0; ; i++) {
+		tii_put_string("testing ");
+		tii_put_uint(i);
+		tii_put_string("\r");
+	}
+}
+
 /** This and only this function initialises the CPU.
  *
  * It does NOT initialise any kernel state.
@@ -156,7 +208,14 @@ BOOT_CODE static bool_t init_cpu(void)
     }
 #endif
 
+#if defined(TII_TESTING) && defined(TII_TESTING_BEFORE_MMU)
+	tii_testing_print_loop();
+#endif
     activate_global_pd();
+#if defined(TII_TESTING) && !defined(TII_TESTING_BEFORE_MMU)
+	tii_testing_print_loop();
+#endif
+
     if (config_set(CONFIG_ARM_HYPERVISOR_SUPPORT)) {
         vcpu_boot_init();
     }
