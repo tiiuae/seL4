@@ -19,9 +19,15 @@
 		/* provided by bootloader, not in DTS? */
                 device_type = "memory";
 
-		reg = <0x00 0x80000000 0x00 0x2c000000>,
+		/* TODO: looks like enabling more memory makes sel4test get
+		 * stuck... but does it really get stuck or is it just that
+		 * much slower?
+		 */
+		reg = <0x00 0x80000000 0x00 0x10000000>;
+		/* reg = <0x00 0x80000000 0x00 0x2c000000>,
                       <0x00 0xac200000 0x00 0x44600000>,
-                      <0x01 0x00000000 0x01 0x80000000>;
+                      <0x01 0x00000000 0x01 0x80000000>; */
+
 	};
 };
 
