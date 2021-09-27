@@ -87,10 +87,14 @@ void VISIBLE NORETURN c_handle_instruction_fault(void)
     c_handle_vm_fault(seL4_InstructionFault);
 }
 
+void tcu_console_putchar(char c);
+
 void VISIBLE NORETURN c_handle_interrupt(void)
 {
     NODE_LOCK_IRQ_IF(IRQT_TO_IRQ(getActiveIRQ()) != irq_remote_call_ipi);
     c_entry_hook();
+
+    tcu_console_putchar('@');
 
 #ifdef TRACK_KERNEL_ENTRIES
     ksKernelEntry.path = Entry_Interrupt;
