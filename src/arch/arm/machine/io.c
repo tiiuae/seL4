@@ -9,9 +9,12 @@
 #include <drivers/uart.h>
 
 #ifdef CONFIG_PRINTING
+void tcu_console_putchar(const char ch);
+
 void kernel_putDebugChar(unsigned char c)
 {
-    uart_console_putchar(c);
+    /* uart_console_putchar(c); */
+    tcu_console_putchar(c);
 }
 #endif /* CONFIG_PRINTING */
 
