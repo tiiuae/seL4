@@ -90,8 +90,11 @@ static inline void cleanInvalidate_D_by_level(int l)
     }
 }
 
+extern void arm_reference_clean_D_PoC(void);
+
 void cleanInvalidate_D_PoC(void)
 {
+#if 0
     int clid = readCLID();
     int loc = LOC(clid);
 
@@ -100,6 +103,8 @@ void cleanInvalidate_D_PoC(void)
             cleanInvalidate_D_by_level(l);
         }
     }
+#endif
+    arm_reference_clean_D_PoC();
 }
 
 void cleanInvalidate_L1D(void)
