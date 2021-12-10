@@ -37,7 +37,30 @@
 			reg = <0xfe201a00 0x200>;
 		};
 
+		aux@7e215000 {
+			reg = <0xfe215000 0x08>;
+		};
+
+		serial@7e215040 {
+			reg = <0xfe215040 0x40>;
+		};
+
+		spi@7e215080 {
+			reg = <0xfe215080 0x40>;
+		};
+
+		spi@7e2150c0 {
+			reg = <0xfe2150c0 0x40>;
+		};
+
 		/* ToDo: Rewrite the base address for other peripherals. */
+	};
+
+	scb {
+
+		ethernet@7d580000 {
+			reg = <0xfd580000 0x10000>;
+		};
 	};
 
 };
