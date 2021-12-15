@@ -171,7 +171,7 @@
 				brcm,function = <0x04>;
 			};
 
-			gpclk2_gpio43 {
+			gpclk2_gpio43 { 
 				brcm,pins = <0x2b>;
 				brcm,function = <0x04>;
 				brcm,pull = <0x00>;
@@ -762,19 +762,11 @@
 				};
 			};
 
-			uart4_gpio8 {
-
-				pin-tx {
-					pins = "gpio8";
-					function = "alt4";
-					bias-disable;
-				};
-
-				pin-rx {
-					pins = "gpio9";
-					function = "alt4";
-					bias-pull-up;
-				};
+			uart4_pins {
+				brcm,pins = <0x08 0x09>;
+				brcm,function = <0x03>;
+				brcm,pull = <0x00 0x02>;
+				phandle = <0x28>;
 			};
 
 			uart4_ctsrts_gpio10 {
@@ -1115,13 +1107,15 @@
 		};
 
 		serial@7e201800 {
+			pinctrl-0 = <0x28>;
+			pinctrl-names = "default";
 			compatible = "arm,pl011\0arm,primecell";
 			reg = <0x7e201800 0x200>;
 			interrupts = <0x00 0x79 0x04>;
 			clocks = <0x06 0x13 0x06 0x14>;
 			clock-names = "uartclk\0apb_pclk";
 			arm,primecell-periphid = <0x241011>;
-			status = "disabled";
+			status = "okay";
 		};
 
 		serial@7e201a00 {
