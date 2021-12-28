@@ -63,7 +63,11 @@ if(KernelPlatformQEMUArmVirt)
     if(KernelArmHypervisorSupport)
         set(QEMU_VIRT_OPTION "virtualization=on,highmem=off,secure=off")
     else()
-        set(QEMU_VIRT_OPTION "virtualization=off")
+        if(Kernel32)
+            set(QEMU_VIRT_OPTION "virtualization=off,highmem=off")
+        else()
+            set(QEMU_VIRT_OPTION "virtualization=off")
+        endif()
     endif()
     if(KernelMaxNumNodes)
         set(QEMU_SMP_OPTION "${KernelMaxNumNodes}")
@@ -78,7 +82,9 @@ if(KernelPlatformQEMUArmVirt)
         ERROR_VARIABLE QEMU_OUTPUT_MESSAGE
         RESULT_VARIABLE error
     )
-    string(STRIP ${QEMU_OUTPUT_MESSAGE} QEMU_OUTPUT_MESSAGE)
+    if(${QEMU_OUTPUT_MESSAGE})
+        string(STRIP ${QEMU_OUTPUT_MESSAGE} QEMU_OUTPUT_MESSAGE)
+    endif()
     message(STATUS ${QEMU_OUTPUT_MESSAGE})
     if(error)
         message(FATAL_ERROR "Failed to dump DTB using ${QEMU_BINARY})")
@@ -112,4 +118,11 @@ endif()
 add_sources(
     DEP "KernelPlatformQEMUArmVirt"
     CFILES src/arch/arm/machine/gic_v2.c src/arch/arm/machine/l2c_nop.c
+)
+
+config_string(
+    KernelUserTop USER_TOP "Set seL4_UserTop constant"
+    DEFAULT 0xa0000000
+    UNQUOTE
+    DEPENDS "KernelPlatformQEMUArmVirt;KernelSel4ArchAarch32"
 )

@@ -6,8 +6,7 @@
 
 from typing import List, Set
 
-import hardware.utils as utils
-
+import hardware
 from hardware.config import Config
 from hardware.device import WrappedNode
 from hardware.fdt import FdtParser
@@ -97,8 +96,11 @@ def get_physical_memory(tree: FdtParser, config: Config) -> List[Region]:
 def get_addrspace_exclude(regions: List[Region], config: Config):
     ''' Returns a list of regions that represents the inverse of the given region list. '''
     ret = set()
-    as_max = utils.align_down(config.addrspace_max, config.get_page_bits())
-    ret.add(Region(0, as_max, None))
+    # We can't create untypeds that exceed the addrspace_max, so we round down to the smallest
+    # untyped size alignment so that the kernel will be able to turn the entire range into untypeds.
+    as_max = hardware.utils.align_down(config.addrspace_max,
+                                       config.get_smallest_kernel_object_alignment())
+    ret.add(Region(0, as_max))
 
     for reg in regions:
         if type(reg) == KernelRegionGroup:

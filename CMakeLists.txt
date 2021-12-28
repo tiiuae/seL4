@@ -130,7 +130,7 @@ macro(KernelCommonFlags)
     add_compile_options("-finstrument-functions")
     add_compile_options("-finstrument-functions-exclude-function-list=__cyg_profile_func_enter,__cyg_profile_func_exit,getCurrentCPUIndex")
 endmacro(KernelCommonFlags)
-KernelCommonFlags(-nostdinc -nostdlib ${KernelOptimisation} -DHAVE_AUTOCONF)
+KernelCommonFlags(-nostdlib ${KernelOptimisation})
 if(KernelFWholeProgram)
     KernelCommonFlags(-fwhole-program)
 endif()
@@ -164,6 +164,7 @@ if(KernelArchRiscV)
 endif()
 KernelCommonFlags(-fno-pic -fno-pie)
 add_compile_options(
+    -nostdinc
     -fno-stack-protector
     -fno-asynchronous-unwind-tables
     -std=c99

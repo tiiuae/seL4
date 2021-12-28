@@ -47,11 +47,6 @@
 			size = <0xc0000000>;
 			alloc-ranges = <0x00 0x3ec00000 0xc0000000>;
 		};
-
-                spintables_carveout {
-                        reg = < 0x00 0x00000000 0x00001000 >;
-                        no-map;
-                };
 	};
 
 	thermal-zones {
