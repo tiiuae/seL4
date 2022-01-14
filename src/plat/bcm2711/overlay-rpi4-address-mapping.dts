@@ -52,14 +52,13 @@
 		spi@7e2150c0 {
 			reg = <0xfe2150c0 0x40>;
 		};
-
 		/* ToDo: Rewrite the base address for other peripherals. */
 	};
 
 	scb {
 
 		ethernet@7d580000 {
-			reg = <0xfd580000 0x10000>;
+			reg = <0x00 0xfd580000 0x10000>;
 		};
 	};
 
