@@ -50,12 +50,4 @@
 		};
 		/* ToDo: Rewrite the base address for other peripherals. */
 	};
-
-	scb {
-
-		ethernet@7d580000 {
-			reg = <0x00 0xfd580000 0x10000>;
-		};
-	};
-
 };
