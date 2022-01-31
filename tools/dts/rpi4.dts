@@ -40,7 +40,7 @@
 			size = <0x4000000>;
 			reusable;
 			linux,cma-default;
-			alloc-ranges = <0x00 0x00 0x40000000>;
+			alloc-ranges = <0x00 0x00 0x4000000>;
 		};
 
 		vc_mem {
@@ -76,7 +76,7 @@
 		#address-cells = <0x01>;
 		#size-cells = <0x01>;
 		ranges = <0x7e000000 0x00 0xfe000000 0x1800000 0x7c000000 0x00 0xfc000000 0x2000000 0x40000000 0x00 0xff800000 0x800000>;
-		dma-ranges = <0xc0000000 0x00 0x00 0x40000000>;
+		dma-ranges = <0xd0000000 0x00 0x10000000 0x10000000>;
 
 		timer@7e003000 {
 			compatible = "brcm,bcm2835-system-timer";
@@ -1018,7 +1018,7 @@
 			reg = <0x7e806000 0x1000>;
 			clocks = <0x06 0x18>;
 			interrupts = <0x00 0x7b 0x04>;
-			status = "disabled";
+			status = "okay";
 			power-domains = <0x0b 0x07>;
 		};
 
@@ -1253,7 +1253,7 @@
 			compatible = "brcm,bcm2711-pixelvalve3";
 			reg = <0x7ec12000 0x100>;
 			interrupts = <0x00 0x6a 0x04>;
-			status = "disabled";
+			status = "okay";
 		};
 
 		clock@7ef00000 {
@@ -1265,13 +1265,28 @@
 			phandle = <0x17>;
 		};
 
+		aon_intr: interrupt-controller@7ef00100 {
+			compatible = "brcm,bcm2711-l2-intc", "brcm,l2-intc";
+			reg = <0x7ef00100 0x30>;
+			interrupts = <0x00 96 0x4>;
+			interrupt-controller;
+			#interrupt-cells = <1>;
+			status = "okay";
+		};
+
 		hdmi@7ef00700 {
 			compatible = "brcm,bcm2711-hdmi0";
-			reg = <0x7ef00700 0x300 0x7ef00300 0x200 0x7ef00f00 0x80 0x7ef00f80 0x80 0x7ef01b00 0x200 0x7ef01f00 0x400 0x7ef00200 0x80 0x7ef04300 0x100 0x7ef20000 0x100>;
-			reg-names = "hdmi\0dvp\0phy\0rm\0packet\0metadata\0csc\0cec\0hd";
+			reg = <0x7ef00700 0x300 0x7ef00300 0x200 0x7ef00f00 0x80 0x7ef00f80 0x80 0x7ef01b00 0x200 0x7ef01f00 0x400 0x7ef00200 0x80 0x7ef04300 0x100 0x7ef20000 0x100 0x7ef00100 0x30>;
+			reg-names = "hdmi\0dvp\0phy\0rm\0packet\0metadata\0csc\0cec\0hd\0intr2";
 			clock-names = "hdmi\0bvb\0audio\0cec";
 			resets = <0x17 0x00>;
+			interrupt-parent = <&aon_intr>;
+			interrupts = <0>, <1>, <2>,
+				     <3>, <4>, <5>;
+			interrupt-names = "cec-tx", "cec-rx", "cec-low",
+					  "wakeup", "hpd-connected", "hpd-removed";
 			ddc = <0x18>;
+			//dmas = <&dma (10 | (1 << 27) | (1 << 24)| (15 << 20) | (10 << 16))>;
 			dmas = <0x19 0x0a>;
 			dma-names = "audio-rx";
 			status = "okay";
@@ -1289,11 +1304,17 @@
 
 		hdmi@7ef05700 {
 			compatible = "brcm,bcm2711-hdmi1";
-			reg = <0x7ef05700 0x300 0x7ef05300 0x200 0x7ef05f00 0x80 0x7ef05f80 0x80 0x7ef06b00 0x200 0x7ef06f00 0x400 0x7ef00280 0x80 0x7ef09300 0x100 0x7ef20000 0x100>;
-			reg-names = "hdmi\0dvp\0phy\0rm\0packet\0metadata\0csc\0cec\0hd";
+			reg = <0x7ef05700 0x300 0x7ef05300 0x200 0x7ef05f00 0x80 0x7ef05f80 0x80 0x7ef06b00 0x200 0x7ef06f00 0x400 0x7ef00280 0x80 0x7ef09300 0x100 0x7ef20000 0x100 0x7ef00100 0x30>;
+			reg-names = "hdmi\0dvp\0phy\0rm\0packet\0metadata\0csc\0cec\0hd\0intr2";
 			ddc = <0x1b>;
 			clock-names = "hdmi\0bvb\0audio\0cec";
 			resets = <0x17 0x01>;
+			interrupt-parent = <&aon_intr>;
+			interrupts = <8>, <7>, <6>,
+				     <9>, <10>, <11>;
+			interrupt-names = "cec-tx", "cec-rx", "cec-low",
+					  "wakeup", "hpd-connected", "hpd-removed";
+			//dmas = <&dma (17 | (1 << 27) | (1 << 24)| (15 << 20) | (10 << 16))>;
 			dmas = <0x19 0x11>;
 			dma-names = "audio-rx";
 			status = "okay";
