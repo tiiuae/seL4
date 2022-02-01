@@ -9,8 +9,8 @@
 	interrupt-parent = <0x01>;
 
 	aliases {
-		serial0 = "/soc/serial@7e215040";
-		serial1 = "/soc/serial@7e201000";
+		serial1 = "/soc/serial@7e215040";
+		serial0 = "/soc/serial@7e201000";
 		emmc2bus = "/emmc2bus";
 		ethernet0 = "/scb/ethernet@7d580000";
 		pcie0 = "/scb/pcie@7d500000";
@@ -57,6 +57,7 @@
 
 	chosen {
 		bootargs = "coherent_pool=1M 8250.nr_uarts=1 snd_bcm2835.enable_compat_alsa=0 snd_bcm2835.enable_hdmi=1";
+		stdout-path = "serial1:115200n8";
 	};
 
 	reserved-memory {
@@ -104,7 +105,7 @@
 		#address-cells = <0x01>;
 		#size-cells = <0x01>;
 		ranges = <0x7e000000 0x00 0xfe000000 0x1800000 0x7c000000 0x00 0xfc000000 0x2000000 0x40000000 0x00 0xff800000 0x800000>;
-		dma-ranges = <0xc0000000 0x00 0x00 0x40000000>;
+		dma-ranges = <0xd0000000 0x00 0x10000000 0x10000000>;
 		phandle = <0x45>;
 
 		timer@7e003000 {
@@ -119,7 +120,7 @@
 			compatible = "brcm,bcm2835-txp";
 			reg = <0x7e004000 0x20>;
 			interrupts = <0x00 0x4b 0x04>;
-			status = "disabled";
+			status = "okay";
 			phandle = <0x47>;
 		};
 
@@ -1299,7 +1300,7 @@
 			pinctrl-0 = <0x15>;
 			skip-init;
 			phandle = <0x31>;
-
+/*
 			bluetooth {
 				compatible = "brcm,bcm43438-bt";
 				max-speed = <0x70800>;
@@ -1307,6 +1308,7 @@
 				status = "disabled";
 				phandle = <0xb0>;
 			};
+			*/
 		};
 
 		spi@7e215080 {
@@ -1362,7 +1364,7 @@
 			reg = <0x7e400000 0x6000>;
 			interrupts = <0x00 0x61 0x04>;
 			clocks = <0x17 0x04>;
-			status = "disabled";
+			status = "okay";
 			phandle = <0xb4>;
 		};
 
@@ -1602,7 +1604,7 @@
 			compatible = "brcm,bcm2711-pixelvalve0";
 			reg = <0x7e206000 0x100>;
 			interrupts = <0x00 0x6d 0x04>;
-			status = "disabled";
+			status = "okay";
 			phandle = <0xc4>;
 		};
 
@@ -1610,7 +1612,7 @@
 			compatible = "brcm,bcm2711-pixelvalve1";
 			reg = <0x7e207000 0x100>;
 			interrupts = <0x00 0x6e 0x04>;
-			status = "disabled";
+			status = "okay";
 			phandle = <0xc5>;
 		};
 
@@ -1618,7 +1620,7 @@
 			compatible = "brcm,bcm2711-pixelvalve2";
 			reg = <0x7e20a000 0x100>;
 			interrupts = <0x00 0x65 0x04>;
-			status = "disabled";
+			status = "okay";
 			phandle = <0xc6>;
 		};
 
@@ -1639,7 +1641,7 @@
 			compatible = "brcm,bcm2711-pixelvalve4";
 			reg = <0x7e216000 0x100>;
 			interrupts = <0x00 0x6e 0x04>;
-			status = "disabled";
+			status = "okay";
 			phandle = <0xc8>;
 		};
 
@@ -1647,7 +1649,7 @@
 			compatible = "brcm,bcm2711-pixelvalve3";
 			reg = <0x7ec12000 0x100>;
 			interrupts = <0x00 0x6a 0x04>;
-			status = "disabled";
+			status = "okay";
 			phandle = <0xc9>;
 		};
 
@@ -1656,7 +1658,7 @@
 			reg = <0x7ec13000 0x1000>;
 			clocks = <0x17 0x0f>;
 			interrupts = <0x00 0x7b 0x04>;
-			status = "disabled";
+			status = "okay";
 			power-domains = <0x13 0x07>;
 			phandle = <0xca>;
 		};
@@ -1667,7 +1669,7 @@
 			clocks = <0x1d>;
 			#clock-cells = <0x01>;
 			#reset-cells = <0x01>;
-			status = "disabled";
+			status = "okay";
 			phandle = <0x1e>;
 		};
 
@@ -1677,7 +1679,7 @@
 			interrupts = <0x00 0x60 0x04>;
 			interrupt-controller;
 			#interrupt-cells = <0x01>;
-			status = "disabled";
+			status = "okay";
 			phandle = <0x20>;
 		};
 
@@ -1694,7 +1696,7 @@
 			ddc = <0x21>;
 			dmas = <0x0b 0x9fa000a>;
 			dma-names = "audio-rx";
-			status = "disabled";
+			status = "okay";
 			phandle = <0xcb>;
 		};
 
@@ -1703,7 +1705,7 @@
 			reg = <0x7ef04500 0x100 0x7ef00b00 0x300>;
 			reg-names = "bsc\0auto-i2c";
 			clock-frequency = <0x17cdc>;
-			status = "disabled";
+			status = "okay";
 			phandle = <0x21>;
 		};
 
@@ -1720,7 +1722,7 @@
 			interrupt-names = "cec-tx\0cec-rx\0cec-low\0wakeup\0hpd-connected\0hpd-removed";
 			dmas = <0x0b 0x9fa0011>;
 			dma-names = "audio-rx";
-			status = "disabled";
+			status = "okay";
 			phandle = <0xcc>;
 		};
 
@@ -1729,7 +1731,7 @@
 			reg = <0x7ef09500 0x100 0x7ef05b00 0x300>;
 			reg-names = "bsc\0auto-i2c";
 			clock-frequency = <0x17cdc>;
-			status = "disabled";
+			status = "okay";
 			phandle = <0x22>;
 		};
 
@@ -1813,7 +1815,7 @@
 			reg = <0x7e600000 0x100>;
 			interrupts = <0x00 0x70 0x04>;
 			brcm,firmware = <0x06>;
-			status = "disabled";
+			status = "okay";
 			phandle = <0xcf>;
 		};
 
@@ -1912,7 +1914,7 @@
 
 	gpu {
 		compatible = "brcm,bcm2711-vc5";
-		status = "disabled";
+		status = "okay";
 		raspberrypi,firmware = <0x06>;
 		phandle = <0xd5>;
 	};
@@ -2015,7 +2017,8 @@
 		#address-cells = <0x02>;
 		#size-cells = <0x02>;
 		ranges = <0x00 0x7c000000 0x00 0xfc000000 0x00 0x3800000 0x00 0x40000000 0x00 0xff800000 0x00 0x800000 0x06 0x00 0x06 0x00 0x00 0x40000000 0x00 0x00 0x00 0x00 0x00 0xfc000000>;
-		dma-ranges = <0x00 0x00 0x00 0x00 0x04 0x00>;
+		//dma-ranges = <0x00 0x00 0x00 0x00 0x04 0x00>;
+
 		phandle = <0xd8>;
 
 		pcie@7d500000 {
@@ -2234,7 +2237,7 @@
 		#address-cells = <0x01>;
 		#size-cells = <0x02>;
 		ranges = <0x7c500000 0x00 0xfc500000 0x00 0x3300000 0x40000000 0x00 0xff800000 0x00 0x800000>;
-		dma-ranges = <0x00 0x00 0x00 0x04 0x00>;
+		//dma-ranges = <0x00 0x00 0x00 0x04 0x00>;
 		phandle = <0xdf>;
 
 		v3d@7ec04000 {
@@ -2246,7 +2249,7 @@
 			clocks = <0x17 0x05>;
 			clocks-names = "v3d";
 			interrupts = <0x00 0x4a 0x04>;
-			status = "disabled";
+			status = "okay";
 			phandle = <0xe0>;
 		};
 	};
