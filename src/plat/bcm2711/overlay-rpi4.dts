@@ -91,7 +91,7 @@
 		 * use the VideoCore memory area
 		 * by declaring it as reserved memory.
 		 */
-		reserved-memory@3c000000 {
+		reserved-memory@3b400000 {
 			reg = < 0x00000000 0x3b400000 0x04C00000 >;
 			no-map;
 		};
