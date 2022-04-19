@@ -19,7 +19,7 @@
 #define HCR_COMMON ( HCR_VM | HCR_RW | HCR_AMO | HCR_IMO | HCR_FMO )
 #else
 /* Trap WFI/WFE/SMC and override CPSR.AIF */
-#define HCR_COMMON ( HCR_TWI | HCR_TWE | HCR_VM | HCR_RW | HCR_AMO | HCR_IMO | HCR_FMO )
+#define HCR_COMMON ( HCR_TWI | /*HCR_TWE |*/ HCR_VM | HCR_RW | HCR_AMO | HCR_IMO | HCR_FMO )
 #endif
 
 /* Allow native tasks to run at EL0, but restrict access */
@@ -52,6 +52,7 @@
 #define SCTLR_DEFAULT      SCTLR_EL1_NATIVE
 
 #define UNKNOWN_FAULT       0x2000000
+#define ESR_EC_WFX          0x1         /* Trap WFI and WFE */
 #define ESR_EC_TFP          0x7         /* Trap instructions that access FPU registers */
 #define ESR_EC_CPACR        0x18        /* Trap access to CPACR                        */
 #define ESR_EC(x)           (((x) & 0xfc000000) >> 26)
@@ -661,6 +662,13 @@ static inline bool_t armv_handleVCPUFault(word_t hsr)
         return true;
     }
 #endif
+    if (ESR_EC(hsr) == ESR_EC_WFX) {
+        if ((hsr & 1) == 0) {
+            /* WFI */
+            handleSyscall(SysYield);
+            return true;
+        }
+    }
 
     if (hsr == UNKNOWN_FAULT) {
         handleUserLevelFault(getESR(), 0);
