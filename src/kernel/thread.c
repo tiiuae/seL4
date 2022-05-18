@@ -447,6 +447,9 @@ void switchToThread(tcb_t *thread)
     assert(refill_ready(thread->tcbSchedContext));
 #endif
 
+    ksKernelEntry.path = Entry_Switch;
+    ksKernelEntry.next = thread;
+
 #ifdef CONFIG_BENCHMARK_TRACK_UTILISATION
     benchmark_utilisation_switch(NODE_STATE(ksCurThread), thread);
 #endif
