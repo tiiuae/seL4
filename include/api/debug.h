@@ -77,7 +77,7 @@ static inline void debug_printUserState(void)
 
 static inline void debug_printTCB(tcb_t *tcb)
 {
-    printf("%40s\t", TCB_PTR_DEBUG_PTR(tcb)->tcbName);
+    printf("%lx %40s\t", (unsigned long int)tcb, TCB_PTR_DEBUG_PTR(tcb)->tcbName);
     char *state;
     switch (thread_state_get_tsType(tcb->tcbState)) {
     case ThreadState_Inactive:
