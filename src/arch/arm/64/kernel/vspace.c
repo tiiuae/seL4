@@ -2526,6 +2526,7 @@ exception_t benchmark_arch_map_logBuffer(word_t frame_cptr)
     lookupCapAndSlot_ret_t lu_ret;
     vm_page_size_t frameSize;
     pptr_t  frame_pptr;
+    static int frameIndex = 0;
 
     /* faulting section */
     lu_ret = lookupCapAndSlot(NODE_STATE(ksCurThread), frame_cptr);
@@ -2555,23 +2556,24 @@ exception_t benchmark_arch_map_logBuffer(word_t frame_cptr)
 
     frame_pptr = cap_frame_cap_get_capFBasePtr(lu_ret.cap);
 
-    ksUserLogBuffer = pptr_to_paddr((void *) frame_pptr);
+    ksUserLogBuffer[frameIndex] = pptr_to_paddr((void *) frame_pptr);
 
-    *armKSGlobalLogPDE = pde_pde_large_new(
+    *(armKSGlobalLogPDE + frameIndex)  = pde_pde_large_new(
 #ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
                              0, // XN
 #else
                              1, // UXN
 #endif
-                             ksUserLogBuffer,
+                             ksUserLogBuffer[frameIndex],
                              0,                         /* global */
                              1,                         /* access flag */
                              SMP_TERNARY(SMP_SHARE, 0), /* Inner-shareable if SMP enabled, otherwise unshared */
                              0,                         /* VMKernelOnly */
                              NORMAL_WT);
 
-    cleanByVA_PoU((vptr_t)armKSGlobalLogPDE, addrFromKPPtr(armKSGlobalLogPDE));
+    cleanByVA_PoU((vptr_t)(armKSGlobalLogPDE + frameIndex), addrFromKPPtr((armKSGlobalLogPDE + frameIndex)));
     invalidateTranslationSingle(KS_LOG_PPTR);
+    frameIndex++;
     return EXCEPTION_NONE;
 }
 #endif /* CONFIG_KERNEL_LOG_BUFFER */

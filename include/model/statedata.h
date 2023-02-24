@@ -121,7 +121,7 @@ extern char ksIdleThreadSC[CONFIG_MAX_NUM_NODES][BIT(seL4_MinSchedContextBits)];
 #endif
 
 #ifdef CONFIG_KERNEL_LOG_BUFFER
-extern paddr_t ksUserLogBuffer;
+extern paddr_t ksUserLogBuffer[NUM_LOG_BUFFER_FRAME];
 #endif /* CONFIG_KERNEL_LOG_BUFFER */
 
 #define SchedulerAction_ResumeCurrentThread ((tcb_t*)0)
