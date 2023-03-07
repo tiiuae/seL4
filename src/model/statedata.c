@@ -110,5 +110,9 @@ kernel_entry_t ksKernelEntry;
 #endif /* DEBUG */
 
 #ifdef CONFIG_KERNEL_LOG_BUFFER
-paddr_t ksUserLogBuffer[NUM_LOG_BUFFER_FRAME];
+#ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
+paddr_t ksUserLogBuffer[CONFIG_NUM_LOG_BUFFER_FRAME];
+#else
+paddr_t ksUserLogBuffer;
+#endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
 #endif /* CONFIG_KERNEL_LOG_BUFFER */

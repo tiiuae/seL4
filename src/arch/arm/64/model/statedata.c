@@ -90,14 +90,16 @@ pde_t armKSGlobalKernelPDs[BIT(PUD_INDEX_BITS)][BIT(PD_INDEX_BITS)] ALIGN_BSS(BI
 pte_t armKSGlobalKernelPT[BIT(PT_INDEX_BITS)] ALIGN_BSS(BIT(seL4_PageTableBits));
 
 #ifdef CONFIG_KERNEL_LOG_BUFFER
+#ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
 /* Backtracking from the end of PD */
-pde_t *armKSGlobalLogPDE = &armKSGlobalKernelPDs[BIT(PUD_INDEX_BITS) - 1][BIT(PD_INDEX_BITS) - 1 - NUM_LOG_BUFFER_FRAME];
-/*
+pde_t *armKSGlobalLogPDE = &armKSGlobalKernelPDs[BIT(PUD_INDEX_BITS) - 1][BIT(PD_INDEX_BITS) - 1 - CONFIG_NUM_LOG_BUFFER_FRAME];
+#else
+pde_t *armKSGlobalLogPDE = &armKSGlobalKernelPDs[BIT(PUD_INDEX_BITS) - 1][BIT(PD_INDEX_BITS) - 2];
 compile_assert(log_pude_is_correct_preallocated_pude,
                GET_PUD_INDEX(KS_LOG_PPTR) == BIT(PUD_INDEX_BITS) - 1);
 compile_assert(log_pde_is_correct_preallocated_pde,
                GET_PD_INDEX(KS_LOG_PPTR) == BIT(PD_INDEX_BITS) - 2);
-*/
+#endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
 #endif
 
 #ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
