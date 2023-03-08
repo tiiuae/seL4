@@ -208,7 +208,11 @@
 #define KDEV_BASE KERNEL_PT_BASE
 
 /* The log buffer is placed before the device region */
+#ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
+#define KS_LOG_PPTR (KDEV_BASE - UL_CONST(0x200000)*CONFIG_NUM_LOG_BUFFER_FRAME)
+#else
 #define KS_LOG_PPTR (KDEV_BASE - UL_CONST(0x200000))
+#endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
 
 /* All PPTR addresses must be canonical to be able to be stored in caps or objects.
    Check that all UTs that are created will have valid address in the PPTR space.

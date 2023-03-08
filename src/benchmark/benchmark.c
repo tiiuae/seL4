@@ -32,7 +32,11 @@ exception_t handle_SysBenchmarkFlushCaches(void)
 exception_t handle_SysBenchmarkResetLog(void)
 {
 #ifdef CONFIG_KERNEL_LOG_BUFFER
+#ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
+    if (ksUserLogBuffer[0] == 0) {
+#else
     if (ksUserLogBuffer == 0) {
+#endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
         userError("A user-level buffer has to be set before resetting benchmark.\
                 Use seL4_BenchmarkSetLogBuffer\n");
         setRegister(NODE_STATE(ksCurThread), capRegister, seL4_IllegalOperation);

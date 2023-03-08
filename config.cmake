@@ -592,4 +592,19 @@ config_option(
     DEFAULT OFF
 )
 
+config_option(
+    KernelExpandLogBuffer ENABLE_LOG_BUFFER_EXPANSION
+    "Allow log buffer to be larger than 1 frame cap."
+    DEFAULT OFF 
+    DEPENDS KernelBenchmarks 
+)
+
+config_string(
+    KernelLogBufferSize NUM_LOG_BUFFER_FRAME
+    "Number of frame caps to be allocated for tracing buffer."
+    DEFAULT 5 
+    DEPENDS KernelExpandLogBuffer UNDEF_DISABLED
+    UNQUOTE
+)
+
 add_config_library(kernel "${configure_string}")
