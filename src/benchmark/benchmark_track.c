@@ -20,7 +20,12 @@ void benchmark_track_exit(void)
     timestamp_t ksExit = timestamp();
     benchmark_track_kernel_entry_t *ksLog = (benchmark_track_kernel_entry_t *) KS_LOG_PPTR;
 
+
+#ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
+    if (likely(ksUserLogBuffer[0] != 0)) {
+#else
     if (likely(ksUserLogBuffer != 0)) {
+#endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
         /* If Log buffer is filled, do nothing */
         if (likely(ksLogIndex < MAX_LOG_SIZE)) {
             duration = ksExit - ksEnter;

@@ -2521,7 +2521,11 @@ void Arch_userStackTrace(tcb_t *tptr)
 #endif /* CONFIG_PRINTING */
 
 #if defined(CONFIG_KERNEL_LOG_BUFFER)
+#ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
+exception_t benchmark_arch_map_logBuffer(word_t frame_cptr, seL4_Uint32 frameIndex)
+#else
 exception_t benchmark_arch_map_logBuffer(word_t frame_cptr)
+#endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
 {
     lookupCapAndSlot_ret_t lu_ret;
     vm_page_size_t frameSize;
@@ -2555,22 +2559,42 @@ exception_t benchmark_arch_map_logBuffer(word_t frame_cptr)
 
     frame_pptr = cap_frame_cap_get_capFBasePtr(lu_ret.cap);
 
+#ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
+    ksUserLogBuffer[frameIndex] = pptr_to_paddr((void *) frame_pptr);
+#else
     ksUserLogBuffer = pptr_to_paddr((void *) frame_pptr);
+#endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
 
-    *armKSGlobalLogPDE = pde_pde_large_new(
+
+#ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
+    *(armKSGlobalLogPDE + frameIndex)  = pde_pde_large_new(
+#else
+    *armKSGlobalLogPDE  = pde_pde_large_new(
+#endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
+
 #ifdef CONFIG_ARM_HYPERVISOR_SUPPORT
                              0, // XN
 #else
                              1, // UXN
 #endif
+
+
+#ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
+                             ksUserLogBuffer[frameIndex],
+#else
                              ksUserLogBuffer,
+#endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
                              0,                         /* global */
                              1,                         /* access flag */
                              SMP_TERNARY(SMP_SHARE, 0), /* Inner-shareable if SMP enabled, otherwise unshared */
                              0,                         /* VMKernelOnly */
                              NORMAL_WT);
 
-    cleanByVA_PoU((vptr_t)armKSGlobalLogPDE, addrFromKPPtr(armKSGlobalLogPDE));
+#ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
+    cleanByVA_PoU((vptr_t)(armKSGlobalLogPDE + frameIndex), addrFromKPPtr((armKSGlobalLogPDE + frameIndex)));
+#else
+    cleanByVA_PoU((vptr_t)(armKSGlobalLogPDE), addrFromKPPtr((armKSGlobalLogPDE)));
+#endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
     invalidateTranslationSingle(KS_LOG_PPTR);
     return EXCEPTION_NONE;
 }

@@ -42,7 +42,11 @@ extern bool_t ksStarted[CONFIG_MAX_NUM_TRACE_POINTS];
 extern timestamp_t ksExit;
 extern seL4_Word ksLogIndex;
 extern seL4_Word ksLogIndexFinalized;
+#ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
+extern paddr_t ksUserLogBuffer[CONFIG_NUM_LOG_BUFFER_FRAME];
+#else
 extern paddr_t ksUserLogBuffer;
+#endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
 
 static inline void trace_point_start(word_t id)
 {
@@ -55,7 +59,11 @@ static inline void trace_point_stop(word_t id)
     benchmark_tracepoint_log_entry_t *ksLog = (benchmark_tracepoint_log_entry_t *) KS_LOG_PPTR;
     ksExit = timestamp();
 
+#ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
+    if (likely(ksUserLogBuffer[0] != 0)) {
+#else
     if (likely(ksUserLogBuffer != 0)) {
+#endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
         if (likely(ksStarted[id])) {
             ksStarted[id] = false;
             if (likely(ksLogIndex < MAX_LOG_SIZE)) {
