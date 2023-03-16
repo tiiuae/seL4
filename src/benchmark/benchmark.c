@@ -79,8 +79,32 @@ exception_t handle_SysBenchmarkFinalizeLog(void)
 #ifdef CONFIG_KERNEL_LOG_BUFFER
 exception_t handle_SysBenchmarkSetLogBuffer(void)
 {
+
     word_t cptr_userFrame = getRegister(NODE_STATE(ksCurThread), capRegister);
+#ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
+    seL4_MessageInfo_t info = messageInfoFromWord(getRegister(NODE_STATE(ksCurThread), msgInfoRegister));
+    seL4_Uint32 len = seL4_MessageInfo_get_length(info);
+    seL4_Uint32 frameIndex = 0;
+    if (len == 1) {
+        frameIndex = (seL4_Uint32)getRegister(NODE_STATE(ksCurThread), msgRegisters[0]); 
+        if (frameIndex >= CONFIG_NUM_LOG_BUFFER_FRAME) {
+            userError("SysBenchmarkSetLogBuffer: The index of input frame exceeds buffer size.");
+            setRegister(NODE_STATE(ksCurThread), capRegister, seL4_IllegalOperation);
+            return EXCEPTION_SYSCALL_ERROR;
+        } 
+    } 
+    else {
+        userError("SysBenchmarkSetLogBuffer: Cannot read the index of the input frame.");
+        setRegister(NODE_STATE(ksCurThread), capRegister, seL4_IllegalOperation);
+        return EXCEPTION_SYSCALL_ERROR;
+    }
+    if (benchmark_arch_map_logBuffer(cptr_userFrame, frameIndex) != EXCEPTION_NONE) {
+#else 
+
     if (benchmark_arch_map_logBuffer(cptr_userFrame) != EXCEPTION_NONE) {
+
+#endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
+   
         setRegister(NODE_STATE(ksCurThread), capRegister, seL4_IllegalOperation);
         return EXCEPTION_SYSCALL_ERROR;
     }

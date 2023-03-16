@@ -2521,15 +2521,15 @@ void Arch_userStackTrace(tcb_t *tptr)
 #endif /* CONFIG_PRINTING */
 
 #if defined(CONFIG_KERNEL_LOG_BUFFER)
+#ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
+exception_t benchmark_arch_map_logBuffer(word_t frame_cptr, seL4_Uint32 frameIndex)
+#else
 exception_t benchmark_arch_map_logBuffer(word_t frame_cptr)
+#endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
 {
     lookupCapAndSlot_ret_t lu_ret;
     vm_page_size_t frameSize;
     pptr_t  frame_pptr;
-
-#ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
-    static int frameIndex = 0;
-#endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
 
     /* faulting section */
     lu_ret = lookupCapAndSlot(NODE_STATE(ksCurThread), frame_cptr);
@@ -2592,7 +2592,6 @@ exception_t benchmark_arch_map_logBuffer(word_t frame_cptr)
 
 #ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
     cleanByVA_PoU((vptr_t)(armKSGlobalLogPDE + frameIndex), addrFromKPPtr((armKSGlobalLogPDE + frameIndex)));
-    frameIndex++;
 #else
     cleanByVA_PoU((vptr_t)(armKSGlobalLogPDE), addrFromKPPtr((armKSGlobalLogPDE)));
 #endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
