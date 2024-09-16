@@ -690,6 +690,24 @@ LIBSEL4_INLINE_FUNC seL4_Word seL4_BenchmarkFinalizeLog(void)
     return (seL4_Word) index_ret;
 }
 
+#ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
+LIBSEL4_INLINE_FUNC seL4_Error seL4_BenchmarkSetLargeLogBuffer(seL4_Word frame_cptr, seL4_MessageInfo_t msgInfo)
+{
+    seL4_MessageInfo_t info;
+     /* Load beginning of the message into registers. */
+    seL4_Word msg0 = seL4_GetMR(0);
+    seL4_Word msg1 = seL4_GetMR(1);
+    seL4_Word msg2 = seL4_GetMR(2);
+    seL4_Word msg3 = seL4_GetMR(3);
+
+    arm_sys_send_recv(seL4_SysBenchmarkSetLogBuffer, frame_cptr, &frame_cptr, msgInfo.words[0], &info.words[0], 
+                    &msg0, &msg1, &msg2, &msg3, 0);
+
+        
+    return (seL4_Error) frame_cptr;
+}
+#endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
+
 LIBSEL4_INLINE_FUNC seL4_Error seL4_BenchmarkSetLogBuffer(seL4_Word frame_cptr)
 {
     seL4_Word unused0 = 0;

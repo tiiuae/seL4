@@ -210,6 +210,24 @@ seL4_BenchmarkResetLog(void);
 LIBSEL4_INLINE_FUNC seL4_Word
 seL4_BenchmarkFinalizeLog(void);
 
+#ifdef CONFIG_ENABLE_LOG_BUFFER_EXPANSION
+/**
+ * @xmlonly <manual name="Set Large Log Buffer" label="seL4_BenchmarkSetLargeLogBuffer"/> @endxmlonly
+ * @brief Set log buffer.
+ *
+ * Provide a large frame object for the kernel to use as a log-buffer and the index of the frame among others in the buffer.
+ * The object must not be device memory, and must be seL4_LargePageBits in size.
+ *
+ * @param[in] frame_cptr A capability pointer to a user allocated frame of seL4_LargePage size.
+ * @param[in] msgInfo the index of current frame capability in total buffer.
+ * @return A `seL4_IllegalOperation` error if `frame_cptr` or `msgInfo` is not valid and couldn't set the buffer.
+ *
+ */
+
+LIBSEL4_INLINE_FUNC seL4_Error
+seL4_BenchmarkSetLargeLogBuffer(seL4_Word frame_cptr, seL4_MessageInfo_t msgInfo);
+#endif /* CONFIG_ENABLE_LOG_BUFFER_EXPANSION */
+
 /**
  * @xmlonly <manual name="Set Log Buffer" label="sel4_benchmarksetlogbuffer"/> @endxmlonly
  * @brief Set log buffer.
